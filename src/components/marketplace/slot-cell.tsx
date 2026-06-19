@@ -1,0 +1,36 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+
+type SlotCellProps = {
+  time: string;
+  state?: "available" | "selected" | "held" | "booked";
+  onClick?: () => void;
+};
+
+const stateStyles = {
+  available: "border-border bg-[#071020] text-foreground hover:border-primary",
+  selected: "blue-glow border-primary bg-primary text-white",
+  held: "border-amber-400/40 bg-amber-400/10 text-amber-200",
+  booked: "cursor-not-allowed border-border bg-muted text-muted-foreground line-through",
+};
+
+export function SlotCell({
+  time,
+  state = "available",
+  onClick,
+}: SlotCellProps) {
+  return (
+    <button
+      type="button"
+      disabled={state === "booked"}
+      onClick={onClick}
+      className={cn(
+        "focus-ring min-h-11 rounded-xl border px-3 py-2 text-xs font-semibold transition",
+        stateStyles[state],
+      )}
+    >
+      {time}
+    </button>
+  );
+}

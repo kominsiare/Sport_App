@@ -1,0 +1,30 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# Next.js
+/.next/
+/out/
+
+# production
+/build
+
+# local tooling
+.DS_Store
+*.pem
+.env*
+!.env.example
+.vercel
+.npm-cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# local design/build source files that pre-date this repository
+/APP_FLOW_DOCUMENTATION.md
+/alchemy-landbase-retainer/
+/cricicks-hero-fix-after-splash.png
+/scripts/deploy-vercel-static.mjs
