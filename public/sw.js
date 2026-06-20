@@ -1,5 +1,6 @@
-const CACHE_NAME = "pllayz-shell-v1";
+const CACHE_NAME = "pllayz-shell-v2";
 const APP_SHELL = ["/", "/login", "/icons/icon-192.png", "/icons/icon-512.png"];
+const PRIVATE_PATHS = ["/app", "/auth", "/onboarding"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -26,6 +27,15 @@ self.addEventListener("fetch", (event) => {
 
   if (request.method !== "GET") return;
 
+  const url = new URL(request.url);
+
+  if (url.origin !== self.location.origin) return;
+
+  if (PRIVATE_PATHS.some((path) => url.pathname.startsWith(path))) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
@@ -44,7 +54,7 @@ self.addEventListener("fetch", (event) => {
       (cached) =>
         cached ||
         fetch(request).then((response) => {
-          if (response.ok && new URL(request.url).origin === self.location.origin) {
+          if (response.ok) {
             const copy = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
           }
