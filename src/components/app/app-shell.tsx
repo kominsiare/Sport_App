@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import type { IconType } from "react-icons";
 import {
+  HiArrowRightOnRectangle,
   HiBars3,
   HiBuildingOffice2,
   HiCalendarDays,
   HiHome,
   HiInboxStack,
   HiMagnifyingGlass,
+  HiShieldCheck,
   HiUser,
   HiXMark,
 } from "react-icons/hi2";
@@ -19,6 +21,7 @@ import { Brand } from "@/components/brand/brand";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { Profile } from "@/types/database";
 
 type NavItem = {
   href: string;
@@ -36,7 +39,7 @@ const playerNav: NavItem[] = [
 const ownerNav: NavItem[] = [
   { href: "/app/owner", label: "Dashboard", icon: HiHome },
   { href: "/app/owner/venues", label: "Venues", icon: HiBuildingOffice2 },
-  { href: "/app/owner/requests", label: "Requests", icon: HiInboxStack },
+  { href: "/app/owner/requests", label: "Activity", icon: HiInboxStack },
   { href: "/app/profile", label: "Profile", icon: HiUser },
 ];
 
@@ -77,17 +80,61 @@ function NavLinks({
   );
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+function AccountSummary({ profile }: { profile: Profile }) {
+  return (
+    <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+      <div className="flex items-start gap-3">
+        <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent/10 text-accent">
+          <HiShieldCheck className="size-5" />
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold">
+            {profile.full_name ?? "Pllayz account"}
+          </p>
+          <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+            {profile.email ?? profile.phone}
+          </p>
+        </div>
+      </div>
+
+      {profile.account_type === "player" && !profile.can_book ? (
+        <Link
+          href="/onboarding?next=/app/player"
+          className="focus-ring mt-3 inline-flex rounded-lg text-xs font-semibold text-amber-200"
+        >
+          Verify phone before booking
+        </Link>
+      ) : (
+        <p className="mt-3 text-xs font-semibold text-accent">Account verified</p>
+      )}
+
+      <form action="/auth/signout" method="post" className="mt-3">
+        <button
+          type="submit"
+          className="focus-ring flex min-h-9 w-full items-center gap-2 rounded-lg text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+        >
+          <HiArrowRightOnRectangle className="size-4" />
+          Sign out
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export function AppShell({
+  children,
+  profile,
+}: {
+  children: React.ReactNode;
+  profile: Profile;
+}) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const ownerMode = pathname.startsWith("/app/owner");
+  const ownerMode = profile.account_type === "owner";
   const items = ownerMode ? ownerNav : playerNav;
 
   return (
     <div className="min-h-dvh bg-background">
-      <div className="border-b border-amber-300/20 bg-amber-300/10 px-4 py-2 text-center text-xs text-amber-100">
-        Module 1 design preview · Real authentication and protected data arrive in Module 2.
-      </div>
       <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-xl md:hidden">
         <div className="flex h-16 items-center justify-between px-4">
           <Brand compact />
@@ -131,11 +178,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 onNavigate={() => setMobileOpen(false)}
               />
             </nav>
+            <div className="mt-auto">
+              <AccountSummary profile={profile} />
+            </div>
           </aside>
         </div>
       ) : null}
 
-      <div className="mx-auto grid min-h-[calc(100dvh-33px)] max-w-[1480px] md:grid-cols-[260px_1fr]">
+      <div className="mx-auto grid min-h-dvh max-w-[1480px] md:grid-cols-[260px_1fr]">
         <aside className="sticky top-0 hidden h-dvh border-r border-border bg-[#050b17] p-5 md:flex md:flex-col">
           <Brand />
           <div className="mt-10 flex items-center justify-between">
@@ -149,17 +199,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <nav className="mt-4 grid gap-1">
             <NavLinks items={items} pathname={pathname} />
           </nav>
-          <div className="mt-auto rounded-2xl border border-border bg-secondary/50 p-4">
-            <p className="text-xs font-semibold text-foreground">Separate account types</p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              Player and owner permissions never change from this navigation.
-            </p>
-            <Link
-              href={ownerMode ? "/app/player" : "/app/owner"}
-              className="focus-ring mt-3 inline-flex rounded-lg text-xs font-semibold text-accent"
-            >
-              Preview {ownerMode ? "player" : "owner"} shell
-            </Link>
+          <div className="mt-auto">
+            <AccountSummary profile={profile} />
           </div>
         </aside>
         <div className="min-w-0">{children}</div>

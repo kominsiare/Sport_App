@@ -1,9 +1,12 @@
 import { AppShell } from "@/components/app/app-shell";
+import { requireCompleteProfile } from "@/lib/auth/server";
 
-export default function ProtectedAppLayout({
+export default async function ProtectedAppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell>{children}</AppShell>;
+  const profile = await requireCompleteProfile();
+
+  return <AppShell profile={profile}>{children}</AppShell>;
 }
