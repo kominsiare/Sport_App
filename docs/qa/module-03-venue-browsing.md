@@ -1,6 +1,6 @@
 # Module 3 Venue Browsing QA
 
-**Date:** 2026-06-20  
+**Date:** 2026-06-21
 **Branch:** `rahulevol/module-3-venue-browsing`  
 **Rollback tag:** `module-2-complete`
 
@@ -42,6 +42,10 @@
 - The local development server starts successfully from
   `/Users/rahulsingh/Downloads/Pllayz_App`.
 - Login and authenticated Player/Owner route separation passed in Module 2.
-- Automated control of the in-app browser was unavailable during final Module 3 QA, so
-  the live venue list/detail visual pass remains a final manual check in the signed-in
-  Player session.
+- After clearing the stale Turbopack cache left by the folder move, repeated login,
+  manifest, and protected-route requests complete without a runtime panic.
+- The signed-in Player venue list returned HTTP 200.
+- The `Sector Seven Sports Yard` live detail route returned HTTP 200.
+- The first catalog image is loaded eagerly to avoid the above-the-fold LCP warning.
+- Automated visual inspection remained unavailable, so pixel-level visual QA should be
+  confirmed manually before converting the draft pull request to ready for review.

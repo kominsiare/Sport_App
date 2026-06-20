@@ -195,7 +195,7 @@ export function VenueBrowser({
 
       {filteredVenues.length > 0 ? (
         <div className="mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filteredVenues.map((venue) => (
+          {filteredVenues.map((venue, index) => (
             <VenueCard
               key={venue.id}
               name={venue.name}
@@ -206,6 +206,7 @@ export function VenueBrowser({
               imageAlt={venue.image_alt}
               description={venue.description}
               href={`/app/player/venues/${venue.slug}`}
+              priority={index === 0}
             />
           ))}
         </div>

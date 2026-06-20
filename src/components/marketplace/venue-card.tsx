@@ -16,6 +16,7 @@ type VenueCardProps = {
   description?: string;
   href?: string;
   mock?: boolean;
+  priority?: boolean;
 };
 
 export function VenueCard({
@@ -28,6 +29,7 @@ export function VenueCard({
   description,
   href = "#",
   mock = false,
+  priority = false,
 }: VenueCardProps) {
   const displayPrice =
     typeof price === "number"
@@ -45,6 +47,7 @@ export function VenueCard({
           src={image}
           alt={imageAlt}
           fill
+          priority={priority}
           className="object-cover transition duration-500 group-hover:scale-[1.025]"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 360px"
         />
