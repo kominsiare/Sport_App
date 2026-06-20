@@ -15,14 +15,6 @@ export const sports: SportName[] = [
 
 export const cities = ["Chandigarh", "Mohali", "Panchkula"] as const;
 
-export const mockVenue = {
-  name: "Night Match Arena",
-  area: "Sector 17 · Chandigarh",
-  price: "From ₹1,800",
-  sports: ["Cricket", "Football", "Badminton"] as SportName[],
-  image: "/assets/night-match-hero.png",
-};
-
 export const bookingStatuses = [
   "requested",
   "owner_accepted",

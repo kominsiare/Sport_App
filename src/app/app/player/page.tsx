@@ -11,13 +11,13 @@ export default function PlayerHomePage() {
     <PageShell
       eyebrow="Player"
       title="Ready for your next game?"
-      description="The player workspace will become live after Supabase Auth and venue data are connected."
+      description="Browse approved Cricket, Football, Badminton, Pickleball and Tennis venues across Tricity."
       actions={
         <Link
           href="/app/player/venues"
           className={cn(buttonVariants(), "w-full sm:w-auto")}
         >
-          Preview venue layout
+          Browse approved venues
           <HiArrowRight className="size-4" />
         </Link>
       }
@@ -27,15 +27,14 @@ export default function PlayerHomePage() {
           <HiMagnifyingGlass className="size-6 text-accent" />
           <h2 className="mt-4 font-semibold">Find venues</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Filter by sport and Tricity location. Live inventory remains locked until login
-            is implemented.
+            Filter the live approved catalog by sport, city, area and starting price.
           </p>
         </Card>
         <Card className="p-5">
           <HiCalendarDays className="size-6 text-accent" />
           <h2 className="mt-4 font-semibold">Track bookings</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Booking status components are ready for the later verified-payment workflow.
+            Booking creation remains locked until the verified-payment workflow is built.
           </p>
         </Card>
       </div>

@@ -1,6 +1,10 @@
 -- Pllayz Module 3: authenticated Player venue browsing.
 -- Fictional Tricity seed data is included for public-beta QA.
 
+create schema if not exists private;
+revoke all on schema private from public;
+grant usage on schema private to authenticated;
+
 create type public.venue_status as enum (
   'draft',
   'pending_review',
@@ -21,6 +25,13 @@ create type public.slot_status as enum (
   'blocked',
   'cancelled'
 );
+
+revoke all on type public.venue_status from public;
+revoke all on type public.venue_approval_decision from public;
+revoke all on type public.slot_status from public;
+grant usage on type public.venue_status to authenticated;
+grant usage on type public.venue_approval_decision to authenticated;
+grant usage on type public.slot_status to authenticated;
 
 create table public.sports (
   id uuid primary key,
@@ -168,7 +179,7 @@ create trigger slots_set_updated_at
 before update on public.slots
 for each row execute function public.set_updated_at();
 
-create or replace function public.require_image_before_venue_approval()
+create or replace function private.require_image_before_venue_approval()
 returns trigger
 language plpgsql
 security definer
@@ -190,9 +201,9 @@ $$;
 
 create trigger venue_approval_requires_image
 before insert or update of decision on public.venue_approvals
-for each row execute function public.require_image_before_venue_approval();
+for each row execute function private.require_image_before_venue_approval();
 
-create or replace function public.prevent_last_approved_venue_image_delete()
+create or replace function private.prevent_last_approved_venue_image_delete()
 returns trigger
 language plpgsql
 security definer
@@ -220,9 +231,9 @@ $$;
 
 create trigger venue_images_keep_one_for_approved_venue
 before delete on public.venue_images
-for each row execute function public.prevent_last_approved_venue_image_delete();
+for each row execute function private.prevent_last_approved_venue_image_delete();
 
-create or replace function public.is_player_account()
+create or replace function private.is_player_account()
 returns boolean
 language sql
 stable
@@ -238,7 +249,7 @@ as $$
   );
 $$;
 
-create or replace function public.is_visible_venue(p_venue_id uuid)
+create or replace function private.is_visible_venue(p_venue_id uuid)
 returns boolean
 language sql
 stable
@@ -282,19 +293,19 @@ create policy "Players can read active sports"
   on public.sports
   for select
   to authenticated
-  using (is_active and public.is_player_account());
+  using (is_active and private.is_player_account());
 
 create policy "Players can read approved venues"
   on public.venues
   for select
   to authenticated
-  using (public.is_player_account() and public.is_visible_venue(id));
+  using (private.is_player_account() and private.is_visible_venue(id));
 
 create policy "Players can read approved venue images"
   on public.venue_images
   for select
   to authenticated
-  using (public.is_player_account() and public.is_visible_venue(venue_id));
+  using (private.is_player_account() and private.is_visible_venue(venue_id));
 
 create policy "Players can read approved venue courts"
   on public.courts
@@ -302,8 +313,8 @@ create policy "Players can read approved venue courts"
   to authenticated
   using (
     is_active
-    and public.is_player_account()
-    and public.is_visible_venue(venue_id)
+    and private.is_player_account()
+    and private.is_visible_venue(venue_id)
   );
 
 create policy "Players can read approved court sports"
@@ -312,13 +323,13 @@ create policy "Players can read approved court sports"
   to authenticated
   using (
     is_active
-    and public.is_player_account()
+    and private.is_player_account()
     and exists (
       select 1
       from public.courts c
       where c.id = court_id
         and c.is_active
-        and public.is_visible_venue(c.venue_id)
+        and private.is_visible_venue(c.venue_id)
     )
   );
 
@@ -327,22 +338,22 @@ create policy "Players can read approved venue slots"
   for select
   to authenticated
   using (
-    public.is_player_account()
+    private.is_player_account()
     and exists (
       select 1
       from public.courts c
       where c.id = court_id
         and c.is_active
-        and public.is_visible_venue(c.venue_id)
+        and private.is_visible_venue(c.venue_id)
     )
   );
 
-revoke all on function public.require_image_before_venue_approval() from public;
-revoke all on function public.prevent_last_approved_venue_image_delete() from public;
-revoke all on function public.is_player_account() from public;
-revoke all on function public.is_visible_venue(uuid) from public;
-grant execute on function public.is_player_account() to authenticated;
-grant execute on function public.is_visible_venue(uuid) to authenticated;
+revoke all on function private.require_image_before_venue_approval() from public;
+revoke all on function private.prevent_last_approved_venue_image_delete() from public;
+revoke all on function private.is_player_account() from public;
+revoke all on function private.is_visible_venue(uuid) from public;
+grant execute on function private.is_player_account() to authenticated;
+grant execute on function private.is_visible_venue(uuid) to authenticated;
 
 insert into public.sports (id, slug, name, default_duration_minutes)
 values
