@@ -33,14 +33,14 @@ export async function GET(request: NextRequest) {
   }
 
   if (!code || !isAccountType(accountType)) {
-    return loginError(request, "oauth_failed", next);
+    return loginError(request, "callback_failed", next);
   }
 
   const supabase = await createServerSupabaseClient();
   const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
   if (exchangeError) {
-    return loginError(request, "oauth_failed", next);
+    return loginError(request, "callback_failed", next);
   }
 
   const { data: profile, error } = await supabase.rpc("ensure_my_profile", {

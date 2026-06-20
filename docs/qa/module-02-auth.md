@@ -52,13 +52,18 @@ Verified on the local Next.js development server:
 - Supabase reports Email enabled; Phone and Google remain disabled until their external
   provider credentials are supplied.
 - Connected lint, TypeScript, and production build pass.
+- A real email sign-in completed the PKCE callback and created a persistent session.
+- The profile RPC created the Player profile and redirected to onboarding.
+- Player onboarding completed and unlocked `/app/player` and `/app/player/venues`.
+- An invalid or previously consumed link is rejected and now shows a specific recovery
+  message instead of a Google-specific OAuth error.
 
 ## Remaining provider-gated checks
 
-- Complete a real email sign-in using an inbox owned by the tester.
 - Configure custom SMTP, change the email template to use `{{ .Token }}`, and verify
   six-digit email OTP delivery.
 - Configure Twilio Verify and verify phone OTP delivery.
 - Configure a Google OAuth web client and verify its callback.
-- Run Player and Venue Owner onboarding with separate real contacts.
+- Run Venue Owner onboarding with a separate real contact.
+- Verify a signed-in Player is redirected away from `/app/owner`.
 - Verify session refresh across a browser restart with a real signed-in account.

@@ -34,6 +34,8 @@ const errorMessages: Record<string, string> = {
     "That verified contact is already connected to another Pllayz account.",
   connection_required:
     "Supabase is not connected yet. Add the project URL and publishable key to .env.local.",
+  callback_failed:
+    "That sign-in link is invalid, expired, or was opened outside the browser that requested it. Request a fresh email and try again.",
   oauth_failed: "Google sign-in could not be completed. Please try again.",
   session_missing: "Your sign-in session expired. Please request a fresh code.",
   profile_failed: "We could not prepare your Pllayz profile. Please try again.",
