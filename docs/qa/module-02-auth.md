@@ -35,19 +35,6 @@ Verified on the local Next.js development server:
 - Only the signed-in user can select their own profile.
 - Duplicate verified email or phone contacts are rejected.
 
-## Requires connected services
-
-The following checks cannot run without a Supabase project and provider credentials:
-
-- phone OTP delivery through Twilio Verify,
-- email OTP delivery and production SMTP,
-- Google OAuth callback,
-- cloud migration execution,
-- live RLS tests with separate Player and Venue Owner users,
-- session refresh across browser restarts.
-
-Run these checks after completing `docs/setup/supabase-auth.md`.
-
 ## Live Supabase verification
 
 **Project:** `pllayz` (`ap-south-1`)
@@ -65,3 +52,13 @@ Run these checks after completing `docs/setup/supabase-auth.md`.
 - Supabase reports Email enabled; Phone and Google remain disabled until their external
   provider credentials are supplied.
 - Connected lint, TypeScript, and production build pass.
+
+## Remaining provider-gated checks
+
+- Complete a real email sign-in using an inbox owned by the tester.
+- Configure custom SMTP, change the email template to use `{{ .Token }}`, and verify
+  six-digit email OTP delivery.
+- Configure Twilio Verify and verify phone OTP delivery.
+- Configure a Google OAuth web client and verify its callback.
+- Run Player and Venue Owner onboarding with separate real contacts.
+- Verify session refresh across a browser restart with a real signed-in account.

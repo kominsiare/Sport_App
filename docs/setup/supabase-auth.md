@@ -2,6 +2,19 @@
 
 The application code and migration are safe to commit. Real credentials belong only in `.env.local` and provider dashboards.
 
+## Current project status
+
+The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
+
+- Module 2 migration: applied.
+- Site URL: `http://localhost:3000`.
+- Redirect URL: `http://localhost:3000/auth/callback`.
+- Web publishable key: stored only in ignored `.env.local`.
+- Email provider: enabled.
+- Phone provider: waiting for Twilio Verify credentials.
+- Google provider: waiting for a Google OAuth client ID and secret.
+- Custom SMTP: not configured.
+
 ## 1. Create or select a Supabase project
 
 Use the India-adjacent region that best matches the launch market and your operational requirements.
@@ -16,6 +29,8 @@ Create `.env.local` from `.env.example`. Never commit `.env.local`.
 ## 2. Apply the migration
 
 Apply `supabase/migrations/202606200001_auth_foundation.sql` through the Supabase SQL Editor or CLI.
+
+This step is already complete for the connected `pllayz` project.
 
 The migration creates:
 
@@ -33,6 +48,9 @@ In **Authentication → URL Configuration**:
 - Site URL: `http://localhost:3000` for local development.
 - Additional redirect URL: `http://localhost:3000/auth/callback`
 - Add the production origin and `/auth/callback` after deployment.
+
+The localhost values are already configured. Production values remain pending until the
+application has a stable deployment URL.
 
 ## 4. Configure email OTP
 
@@ -71,4 +89,3 @@ npm run dev
 ```
 
 Test Player and Owner accounts separately. A verified contact already associated with one account type must not be used to create the other account type.
-
