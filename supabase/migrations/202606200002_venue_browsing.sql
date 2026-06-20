@@ -145,8 +145,8 @@ create index court_sports_sport_active_idx
 
 create table public.slots (
   id uuid primary key default gen_random_uuid(),
-  court_id uuid not null references public.courts(id) on delete cascade,
-  sport_id uuid not null references public.sports(id) on delete restrict,
+  court_id uuid not null,
+  sport_id uuid not null,
   start_time timestamptz not null,
   end_time timestamptz not null,
   duration_minutes integer not null,
@@ -154,8 +154,15 @@ create table public.slots (
   status public.slot_status not null default 'available',
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now()),
+  constraint slots_supported_court_sport
+    foreign key (court_id, sport_id)
+    references public.court_sports(court_id, sport_id)
+    on delete cascade,
   constraint slots_time_order check (end_time > start_time),
   constraint slots_duration_positive check (duration_minutes > 0),
+  constraint slots_duration_matches_window check (
+    end_time = start_time + make_interval(mins => duration_minutes)
+  ),
   constraint slots_price_nonnegative check (price_total >= 0),
   unique (court_id, sport_id, start_time)
 );
