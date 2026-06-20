@@ -7,6 +7,7 @@ The application code and migration are safe to commit. Real credentials belong o
 The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 
 - Module 2 migration: applied.
+- Module 3 venue browsing migrations: applied.
 - Site URL: `http://localhost:3000`.
 - Redirect URL: `http://localhost:3000/auth/callback`.
 - Web publishable key: stored only in ignored `.env.local`.
@@ -40,6 +41,10 @@ The migration creates:
 - profile onboarding functions,
 - contact synchronization,
 - Row Level Security policies.
+
+Module 3 additionally creates the approved venue catalog, courts, supported sports,
+venue images, and read-only slots. Its migrations are tracked in the linked Supabase
+project and should be applied through `supabase db push`.
 
 ## 3. Configure redirect URLs
 
