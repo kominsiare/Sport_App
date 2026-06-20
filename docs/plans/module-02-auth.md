@@ -1,6 +1,6 @@
 # Module 2 — Supabase Auth Implementation
 
-**Status:** Approved  
+**Status:** Implemented; live provider verification pending
 **Approved:** 2026-06-20  
 **Rollback point:** Git tag `module-1-complete`  
 **Branch:** `rahulevol/module-2-auth`
@@ -72,3 +72,14 @@ Add secure, login-gated access with Supabase Auth while preserving separate Play
 - Twilio Verify credentials configured in Supabase.
 - Production SMTP before public beta.
 
+## Implementation result
+
+- Supabase clients initialize lazily so builds remain safe without credentials.
+- `src/proxy.ts` refreshes sessions and redirects unauthenticated protected requests.
+- Protected Server Component layouts independently verify signed claims and account type.
+- OTP and Google callbacks create or recover the immutable profile through a restricted RPC.
+- Onboarding enforces different Player and Venue Owner completion rules.
+- Direct client mutation of account type, admin access, and audit records is denied.
+- Local lint, type checking, production build, desktop browser QA, and 390px mobile QA pass.
+- Live OTP delivery, OAuth, and cloud RLS verification require the external setup in
+  `docs/setup/supabase-auth.md`.
