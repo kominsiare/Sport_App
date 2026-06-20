@@ -47,3 +47,21 @@ The following checks cannot run without a Supabase project and provider credenti
 - session refresh across browser restarts.
 
 Run these checks after completing `docs/setup/supabase-auth.md`.
+
+## Live Supabase verification
+
+**Project:** `pllayz` (`ap-south-1`)
+**Verified:** 2026-06-20
+
+- Module 2 migration applied successfully through the Supabase SQL Editor.
+- `profiles` exists with RLS enabled.
+- `ensure_my_profile(text)` exists.
+- One self-select profile policy exists.
+- Anonymous users cannot select `profiles`, `admin_users`, or `auth_audit_logs`.
+- Authenticated clients have profile select permission but no direct insert permission.
+- Anonymous execution of `ensure_my_profile` returns `authentication_required`.
+- Local site URL and `/auth/callback` redirect URL are configured.
+- The local ignored `.env.local` points to the project with the exact web publishable key.
+- Supabase reports Email enabled; Phone and Google remain disabled until their external
+  provider credentials are supplied.
+- Connected lint, TypeScript, and production build pass.

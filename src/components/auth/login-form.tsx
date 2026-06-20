@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { OtpInput } from "@/components/ui/otp-input";
 import { getBrowserSupabaseClient } from "@/lib/supabase/client";
+import type { AuthProviderAvailability } from "@/lib/supabase/auth-settings";
 import { cn } from "@/lib/utils";
 import type { AccountType } from "@/types/database";
 
@@ -64,14 +65,18 @@ function readableAuthError(message: string) {
 export function LoginForm({
   nextPath = "/app",
   configured,
+  providers,
   initialError,
 }: {
   nextPath?: string;
   configured: boolean;
+  providers: AuthProviderAvailability;
   initialError?: string;
 }) {
   const [accountType, setAccountType] = useState<AccountType>("player");
-  const [method, setMethod] = useState<Method>("phone");
+  const [method, setMethod] = useState<Method>(
+    providers.phone ? "phone" : "email",
+  );
   const [stage, setStage] = useState<Stage>("identify");
   const [identifier, setIdentifier] = useState("");
   const [sentTo, setSentTo] = useState("");
@@ -90,7 +95,7 @@ export function LoginForm({
 
   async function sendCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!configured) return;
+    if (!configured || !providers[method]) return;
 
     const normalized =
       method === "phone" ? normalizePhone(identifier) : identifier.trim().toLowerCase();
@@ -117,6 +122,12 @@ export function LoginForm({
             email: normalized,
             options: {
               shouldCreateUser: true,
+              emailRedirectTo: (() => {
+                const callbackUrl = new URL("/auth/callback", window.location.origin);
+                callbackUrl.searchParams.set("account_type", accountType);
+                callbackUrl.searchParams.set("next", nextPath);
+                return callbackUrl.toString();
+              })(),
               data: { account_type: accountType },
             },
           });
@@ -166,7 +177,7 @@ export function LoginForm({
   }
 
   async function continueWithGoogle() {
-    if (!configured) return;
+    if (!configured || !providers.google) return;
 
     setBusy(true);
     setMessage("");
@@ -248,10 +259,10 @@ export function LoginForm({
               <button
                 key={item}
                 type="button"
-                disabled={stage === "verify" || busy}
+                disabled={stage === "verify" || busy || !providers[item]}
                 onClick={() => resetVerification(item)}
                 className={cn(
-                  "focus-ring flex min-h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold capitalize text-muted-foreground transition",
+                  "focus-ring flex min-h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold capitalize text-muted-foreground transition disabled:cursor-not-allowed disabled:opacity-45",
                   method === item && "bg-secondary text-foreground",
                 )}
               >
@@ -305,7 +316,12 @@ export function LoginForm({
           ) : (
             <form className="mt-5" onSubmit={verifyCode}>
               <p className="text-sm font-medium">Enter the six-digit code</p>
-              <p className="mt-1 text-xs text-muted-foreground">Sent to {sentTo}</p>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                Sent to {sentTo}.
+                {method === "email"
+                  ? " You can enter the code or open the secure sign-in link in the email."
+                  : null}
+              </p>
               <OtpInput
                 key={`${method}-${sentTo}`}
                 className="mt-4"
@@ -344,11 +360,16 @@ export function LoginForm({
           <Button
             variant="outline"
             className="w-full"
-            disabled={!configured || busy || stage === "verify"}
+            disabled={!configured || !providers.google || busy || stage === "verify"}
             onClick={continueWithGoogle}
           >
             <FcGoogle className="size-5" />
             Continue with Google
+            {!providers.google ? (
+              <span className="ml-auto text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                Setup required
+              </span>
+            ) : null}
           </Button>
 
           <p className="mt-6 text-center text-[11px] leading-5 text-muted-foreground">

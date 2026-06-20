@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/login-form";
 import { destinationForProfile, safeAppPath } from "@/lib/auth/navigation";
 import { getCurrentAccount } from "@/lib/auth/server";
+import { getAuthProviderAvailability } from "@/lib/supabase/auth-settings";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default async function LoginPage({
   const params = await searchParams;
   const safeNext = safeAppPath(params.next);
   const configured = isSupabaseConfigured();
+  const providers = await getAuthProviderAvailability();
 
   if (configured) {
     const account = await getCurrentAccount();
@@ -30,6 +32,7 @@ export default async function LoginPage({
     <LoginForm
       nextPath={safeNext}
       configured={configured}
+      providers={providers}
       initialError={params.error}
     />
   );
