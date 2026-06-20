@@ -47,17 +47,17 @@ export function SportChip({
     >
       <span
         className={cn(
-          "grid size-14 place-items-center rounded-full border border-border bg-[#071020] text-foreground transition duration-200 group-hover:border-primary/70",
+          "grid size-11 place-items-center rounded-full border border-border bg-[#071020] text-foreground transition duration-200 group-hover:border-primary/70 md:size-14",
           selected &&
             "blue-glow border-[#6383ff] bg-primary text-white group-hover:border-[#7f99ff]",
           compact && "size-8 border-0 bg-transparent",
         )}
       >
-        <Icon className={cn("size-7", compact && "size-5")} />
+        <Icon className={cn("size-6 md:size-7", compact && "size-5")} />
       </span>
       <span
         className={cn(
-          "border-b-2 border-transparent pb-1 text-xs font-medium text-muted-foreground transition",
+          "border-b-2 border-transparent pb-1 text-[11px] font-medium text-muted-foreground transition md:text-xs",
           selected && "border-accent text-foreground",
           compact && "border-0 pb-0 text-xs",
         )}
