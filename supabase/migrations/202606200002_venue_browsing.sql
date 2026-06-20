@@ -829,7 +829,7 @@ cross join lateral (
       timezone('Asia/Kolkata', now())::date + slot_day.day_offset
     ) + make_interval(hours => slot_hour.hour_value)
   ) at time zone 'Asia/Kolkata' as slot_start
-  from generate_series(1, 3) as slot_day(day_offset)
+  from generate_series(1, 7) as slot_day(day_offset)
   cross join (values (18), (21)) as slot_hour(hour_value)
   where slot_hour.hour_value = 18
     or coalesce(cs.duration_minutes, s.default_duration_minutes) <= 120
