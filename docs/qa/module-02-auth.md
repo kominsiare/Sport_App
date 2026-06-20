@@ -57,6 +57,10 @@ Verified on the local Next.js development server:
 - Player onboarding completed and unlocked `/app/player` and `/app/player/venues`.
 - An invalid or previously consumed link is rejected and now shows a specific recovery
   message instead of a Google-specific OAuth error.
+- Manual verification confirmed the Player session remained usable after the local
+  development server restarted.
+- Manual verification confirmed the Player account does not gain access to the Owner
+  workspace.
 
 ## Remaining provider-gated checks
 
@@ -65,5 +69,3 @@ Verified on the local Next.js development server:
 - Configure Twilio Verify and verify phone OTP delivery.
 - Configure a Google OAuth web client and verify its callback.
 - Run Venue Owner onboarding with a separate real contact.
-- Verify a signed-in Player is redirected away from `/app/owner`.
-- Verify session refresh across a browser restart with a real signed-in account.
