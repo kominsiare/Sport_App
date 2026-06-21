@@ -4,7 +4,7 @@ Pllayz is a Tricity-first, login-gated, multi-sport venue-booking PWA for player
 
 ## Current milestone
 
-Module 3 adds live, login-gated venue browsing:
+Module 4 adds ownership-scoped venue operations:
 
 - Next.js App Router with TypeScript
 - installable PWA manifest and service worker
@@ -15,11 +15,14 @@ Module 3 adds live, login-gated venue browsing:
 - live sport, city, area, price, and sorting filters
 - venue details with courts, supported sports, prices, and read-only slots
 - Player-only venue RLS and explicit anonymous-access denial
-- seven-day demo slot horizon
+- owner-created private venue drafts and admin-review submission
+- ownership-scoped court, sport, weekly availability, and slot management
+- rolling seven-day slot generation and audited offline blocking
+- read-only 5% commission estimates
 - PWA caching that excludes authenticated pages
 
-Owner venue management, booking mutations, Razorpay, and admin operations remain in
-later modules.
+Player booking mutations, Razorpay, commission ledgers, and admin approval UI remain
+in later modules.
 
 ## Local development
 
