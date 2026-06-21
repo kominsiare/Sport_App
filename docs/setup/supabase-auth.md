@@ -8,6 +8,7 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 
 - Module 2 migration: applied.
 - Module 3 venue browsing migrations: applied.
+- Module 4 owner dashboard migrations: applied.
 - Site URL: `http://localhost:3000`.
 - Redirect URL: `http://localhost:3000/auth/callback`.
 - Web publishable key: stored only in ignored `.env.local`.
@@ -45,6 +46,10 @@ The migration creates:
 Module 3 additionally creates the approved venue catalog, courts, supported sports,
 venue images, and read-only slots. Its migrations are tracked in the linked Supabase
 project and should be applied through `supabase db push`.
+
+Module 4 adds ownership-scoped venue operations, weekly availability rules, rolling
+slot generation, offline blocks, and append-only owner audit records. Player and Owner
+read policies are consolidated to avoid duplicate RLS evaluation.
 
 ## 3. Configure redirect URLs
 
