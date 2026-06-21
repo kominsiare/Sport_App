@@ -58,6 +58,12 @@ export async function getVenueCatalog() {
 
 export async function getVenueDetail(slug: string): Promise<VenueDetail | null> {
   const supabase = await createServerSupabaseClient();
+  const { error: expiryError } = await supabase.rpc("expire_booking_holds", {});
+
+  if (expiryError) {
+    throw new Error(`Unable to refresh slot availability: ${expiryError.message}`);
+  }
+
   const { data: venue, error: venueError } = await supabase
     .from("venue_catalog")
     .select("*")

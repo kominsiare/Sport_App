@@ -1,4 +1,5 @@
 import { PageShell } from "@/components/layout/page-shell";
+import { BookingStatusBadge } from "@/components/marketplace/booking-status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getOwnerDashboardData } from "@/lib/owner/server";
@@ -13,7 +14,7 @@ const activityDate = new Intl.DateTimeFormat("en-IN", {
 });
 
 export default async function OwnerRequestsPage() {
-  const { logs } = await getOwnerDashboardData();
+  const { logs, bookingHolds } = await getOwnerDashboardData();
 
   return (
     <PageShell
@@ -22,6 +23,54 @@ export default async function OwnerRequestsPage() {
       description="Owner changes are live and audited. Booking and verified-payment events will join this feed in later modules."
     >
       <Card className="p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold">Player payment holds</h2>
+          <Badge variant="neutral">Read-only</Badge>
+        </div>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">
+          Owners can see operational court demand, but cannot accept, reject, or
+          inspect Player contact details.
+        </p>
+        {bookingHolds.length > 0 ? (
+          <div className="mt-4 grid gap-3">
+            {bookingHolds.map((hold) => (
+              <div
+                key={hold.id}
+                className="rounded-xl border border-border bg-secondary/40 p-4"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <BookingStatusBadge status={hold.status} />
+                      <Badge variant="neutral">
+                        {hold.snapshot_sport_name}
+                      </Badge>
+                    </div>
+                    <p className="mt-3 text-sm font-semibold">
+                      {hold.snapshot_venue_name} · {hold.snapshot_court_name}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {activityDate.format(
+                        new Date(hold.snapshot_start_time),
+                      )}{" "}
+                      · {hold.snapshot_duration_minutes} min
+                    </p>
+                  </div>
+                  <p className="text-sm font-semibold text-accent">
+                    ₹{hold.snapshot_total_amount.toLocaleString("en-IN")}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-muted-foreground">
+            No Player payment holds have reached your venues yet.
+          </p>
+        )}
+      </Card>
+
+      <Card className="mt-5 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold">Operations audit</h2>
           <Badge variant="neutral">Append-only</Badge>
@@ -50,12 +99,12 @@ export default async function OwnerRequestsPage() {
       </Card>
 
       <Card className="mt-5 p-5">
-        <Badge variant="warning">Booking module pending</Badge>
+        <Badge variant="warning">Payment module pending</Badge>
         <h2 className="mt-4 font-semibold">No booking decisions here yet</h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           The approved payment-at-booking flow does not require owner acceptance
-          before payment. Confirmed bookings, payment holds and operational alerts
-          will appear after those modules are approved.
+          before payment. Confirmed bookings and verified-payment alerts will appear
+          after Razorpay integration is approved.
         </p>
       </Card>
     </PageShell>

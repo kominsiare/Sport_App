@@ -3,6 +3,11 @@ export type TricityCity = "Chandigarh" | "Mohali" | "Panchkula";
 export type VenueStatus = "draft" | "pending_review" | "active" | "suspended";
 export type VenueApprovalDecision = "pending" | "approved" | "rejected";
 export type SlotStatus = "available" | "held" | "booked" | "blocked" | "cancelled";
+export type BookingHoldStatus =
+  | "payment_pending"
+  | "cancelled"
+  | "expired"
+  | "converted";
 
 export type Profile = {
   id: string;
@@ -130,6 +135,48 @@ export type OwnerOperationLog = {
   court_id: string | null;
   slot_id: string | null;
   action: string;
+  details: Record<string, unknown>;
+  created_at: string;
+};
+
+export type BookingHold = {
+  id: string;
+  player_user_id: string;
+  owner_user_id: string | null;
+  venue_id: string | null;
+  court_id: string | null;
+  sport_id: string | null;
+  slot_id: string | null;
+  status: BookingHoldStatus;
+  hold_started_at: string;
+  expires_at: string;
+  cancelled_at: string | null;
+  converted_at: string | null;
+  snapshot_venue_name: string;
+  snapshot_venue_city: TricityCity;
+  snapshot_venue_area: string;
+  snapshot_court_name: string;
+  snapshot_court_type: string;
+  snapshot_sport_name: string;
+  snapshot_start_time: string;
+  snapshot_end_time: string;
+  snapshot_duration_minutes: number;
+  snapshot_total_amount: number;
+  snapshot_advance_amount: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type BookingAuditLog = {
+  id: number;
+  booking_hold_id: string | null;
+  player_user_id: string | null;
+  owner_user_id: string | null;
+  venue_id: string | null;
+  actor_user_id: string | null;
+  action: string;
+  old_status: BookingHoldStatus | null;
+  new_status: BookingHoldStatus | null;
   details: Record<string, unknown>;
   created_at: string;
 };
@@ -365,6 +412,18 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      booking_holds: {
+        Row: BookingHold;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      booking_audit_logs: {
+        Row: BookingAuditLog;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: {
       venue_catalog: {
@@ -401,6 +460,18 @@ export type Database = {
         };
         Returns: number;
       };
+      create_booking_hold: {
+        Args: { p_slot_id: string };
+        Returns: BookingHold;
+      };
+      cancel_my_booking_hold: {
+        Args: { p_hold_id: string };
+        Returns: BookingHold;
+      };
+      expire_booking_holds: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
     };
     Enums: {
       account_type: AccountType;
@@ -408,6 +479,7 @@ export type Database = {
       venue_status: VenueStatus;
       venue_approval_decision: VenueApprovalDecision;
       slot_status: SlotStatus;
+      booking_hold_status: BookingHoldStatus;
     };
     CompositeTypes: Record<string, never>;
   };

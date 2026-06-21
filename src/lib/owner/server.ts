@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type {
+  BookingHold,
   Court,
   CourtSport,
   OwnerOperationLog,
@@ -45,6 +46,12 @@ export type OwnerVenueOperations = {
 
 export async function getOwnerDashboardData() {
   const supabase = await createServerSupabaseClient();
+  const { error: expiryError } = await supabase.rpc("expire_booking_holds", {});
+
+  if (expiryError) {
+    throw new Error(`Unable to refresh booking holds: ${expiryError.message}`);
+  }
+
   const now = new Date().toISOString();
   const [
     { data: venues, error: venuesError },
@@ -54,6 +61,7 @@ export async function getOwnerDashboardData() {
     { data: courtSports, error: courtSportsError },
     { data: slots, error: slotsError },
     { data: logs, error: logsError },
+    { data: bookingHolds, error: bookingHoldsError },
   ] = await Promise.all([
     supabase.from("venues").select("*").order("created_at", { ascending: false }),
     supabase.from("venue_approvals").select("*"),
@@ -70,6 +78,11 @@ export async function getOwnerDashboardData() {
       .select("*")
       .order("created_at", { ascending: false })
       .limit(12),
+    supabase
+      .from("booking_holds")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30),
   ]);
 
   const errors = [
@@ -80,6 +93,7 @@ export async function getOwnerDashboardData() {
     courtSportsError,
     slotsError,
     logsError,
+    bookingHoldsError,
   ].filter(Boolean);
 
   if (errors.length > 0) {
@@ -145,6 +159,7 @@ export async function getOwnerDashboardData() {
   return {
     venues: summaries,
     logs: logs ?? [],
+    bookingHolds: (bookingHolds ?? []) as BookingHold[],
     metrics: {
       totalVenues: summaries.length,
       pendingReview: summaries.filter(
@@ -160,6 +175,9 @@ export async function getOwnerDashboardData() {
         (total, venue) => total + venue.blockedSlotCount,
         0,
       ),
+      activeBookingHolds: (bookingHolds ?? []).filter(
+        (hold) => hold.status === "payment_pending",
+      ).length,
     },
   };
 }
