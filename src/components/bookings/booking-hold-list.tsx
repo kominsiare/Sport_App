@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   HiArrowPath,
   HiCalendarDays,
@@ -53,21 +53,28 @@ function formatCountdown(totalSeconds: number) {
 
 function ActiveHoldCard({ hold }: { hold: BookingHold }) {
   const router = useRouter();
-  const [seconds, setSeconds] = useState(() => remainingSeconds(hold.expires_at));
+  const [seconds, setSeconds] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const expiryStarted = useRef(false);
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
+    const updateCountdown = () => {
       setSeconds(remainingSeconds(hold.expires_at));
+    };
+    const initialTimer = window.setTimeout(updateCountdown, 0);
+    const timer = window.setInterval(() => {
+      updateCountdown();
     }, 1000);
 
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearTimeout(initialTimer);
+      window.clearInterval(timer);
+    };
   }, [hold.expires_at]);
 
   useEffect(() => {
-    if (seconds > 0 || expiryStarted.current) return;
+    if (seconds === null || seconds > 0 || expiryStarted.current) return;
 
     expiryStarted.current = true;
     const supabase = getBrowserSupabaseClient();
@@ -116,7 +123,7 @@ function ActiveHoldCard({ hold }: { hold: BookingHold }) {
           </div>
           <div className="text-right">
             <p className="font-mono text-3xl font-bold text-amber-300">
-              {formatCountdown(seconds)}
+              {seconds === null ? "--:--" : formatCountdown(seconds)}
             </p>
             <p className="mt-1 text-xs text-amber-100/60">hold remaining</p>
           </div>
@@ -164,14 +171,9 @@ function ActiveHoldCard({ hold }: { hold: BookingHold }) {
 }
 
 export function BookingHoldList({ holds }: { holds: BookingHold[] }) {
-  const activeHold = useMemo(
-    () => holds.find((hold) => hold.status === "payment_pending") ?? null,
-    [holds],
-  );
-  const history = useMemo(
-    () => holds.filter((hold) => hold.status !== "payment_pending"),
-    [holds],
-  );
+  const activeHold =
+    holds.find((hold) => hold.status === "payment_pending") ?? null;
+  const history = holds.filter((hold) => hold.status !== "payment_pending");
 
   return (
     <>

@@ -94,7 +94,6 @@ export function BookingSlotPicker({
     }
 
     router.push("/app/player/bookings");
-    router.refresh();
   }
 
   if (hasActiveHold) {
