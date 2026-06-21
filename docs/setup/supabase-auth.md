@@ -9,6 +9,7 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 - Module 2 migration: applied.
 - Module 3 venue browsing migrations: applied.
 - Module 4 owner dashboard migrations: applied.
+- Module 5 booking hold migrations: applied.
 - Site URL: `http://localhost:3000`.
 - Redirect URL: `http://localhost:3000/auth/callback`.
 - Web publishable key: stored only in ignored `.env.local`.
@@ -50,6 +51,10 @@ project and should be applied through `supabase db push`.
 Module 4 adds ownership-scoped venue operations, weekly availability rules, rolling
 slot generation, offline blocks, and append-only owner audit records. Player and Owner
 read policies are consolidated to avoid duplicate RLS evaluation.
+
+Module 5 adds immutable ten-minute booking snapshots, physical-court overlap exclusion,
+one-active-hold enforcement, cancellation and expiry RPCs, Player/Owner read isolation,
+and append-only booking audit events. Razorpay is intentionally not connected yet.
 
 ## 3. Configure redirect URLs
 

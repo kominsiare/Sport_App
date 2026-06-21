@@ -8,11 +8,12 @@ import {
   HiMapPin,
 } from "react-icons/hi2";
 
+import { BookingSlotPicker } from "@/components/bookings/booking-slot-picker";
 import { PageShell } from "@/components/layout/page-shell";
-import { SlotCell } from "@/components/marketplace/slot-cell";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getActivePlayerBookingHold } from "@/lib/bookings/server";
 import { getVenueDetail } from "@/lib/venues/server";
 import { cn } from "@/lib/utils";
 
@@ -21,21 +22,6 @@ const money = new Intl.NumberFormat("en-IN", {
   currency: "INR",
   maximumFractionDigits: 0,
 });
-
-const dateTime = new Intl.DateTimeFormat("en-IN", {
-  timeZone: "Asia/Kolkata",
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  hour: "numeric",
-  minute: "2-digit",
-});
-
-function slotState(status: string) {
-  if (status === "booked") return "booked" as const;
-  if (status === "held" || status === "blocked") return "held" as const;
-  return "available" as const;
-}
 
 export default async function PlayerVenueDetailPage({
   params,
@@ -46,6 +32,8 @@ export default async function PlayerVenueDetailPage({
   const venue = await getVenueDetail(venueId);
 
   if (!venue) notFound();
+
+  const activeHold = await getActivePlayerBookingHold();
 
   return (
     <PageShell
@@ -118,29 +106,16 @@ export default async function PlayerVenueDetailPage({
               <CardContent className="pt-5">
                 <div className="flex items-center gap-2">
                   <HiClock className="size-5 text-accent" />
-                  <h3 className="text-sm font-semibold">Next read-only slots</h3>
+                  <h3 className="text-sm font-semibold">
+                    Choose a future court slot
+                  </h3>
                 </div>
-                {court.slots.length > 0 ? (
-                  <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {court.slots.slice(0, 6).map((slot) => (
-                      <SlotCell
-                        key={slot.id}
-                        time={`${slot.sportName} · ${dateTime.format(
-                          new Date(slot.start_time),
-                        )}`}
-                        state={slotState(slot.status)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-3 text-sm text-muted-foreground">
-                    No upcoming display slots are available for this court.
-                  </p>
-                )}
-                <p className="mt-4 text-xs leading-5 text-muted-foreground">
-                  Slots are informational in Module 3. Booking and live availability
-                  rechecks arrive in the approved booking module.
-                </p>
+                <BookingSlotPicker
+                  venueName={venue.name}
+                  courtName={court.name}
+                  slots={court.slots}
+                  hasActiveHold={Boolean(activeHold)}
+                />
               </CardContent>
             </Card>
           ))}
@@ -156,7 +131,7 @@ export default async function PlayerVenueDetailPage({
             </p>
             <p className="mt-2 text-xs leading-5 text-muted-foreground">
               Price is taken from the lowest active court. Final sport and slot pricing is
-              confirmed later in the booking flow.
+              snapshotted when a ten-minute hold begins.
             </p>
           </Card>
 

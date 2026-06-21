@@ -3,6 +3,7 @@ import {
   HiArrowRight,
   HiBuildingOffice2,
   HiCalendarDays,
+  HiClock,
   HiNoSymbol,
   HiShieldCheck,
 } from "react-icons/hi2";
@@ -45,6 +46,11 @@ export default async function OwnerHomePage() {
       value: metrics.blockedSlots,
       icon: HiNoSymbol,
     },
+    {
+      label: "Active payment holds",
+      value: metrics.activeBookingHolds,
+      icon: HiClock,
+    },
   ];
 
   return (
@@ -62,7 +68,7 @@ export default async function OwnerHomePage() {
         </Link>
       }
     >
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {cards.map((metric) => {
           const Icon = metric.icon;
           return (

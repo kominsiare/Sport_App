@@ -1,32 +1,20 @@
 import { Badge, type BadgeProps } from "@/components/ui/badge";
-import type { BookingStatus } from "@/lib/mock-data";
+import type { BookingHoldStatus } from "@/types/database";
 
-const labels: Record<BookingStatus, string> = {
-  requested: "Requested",
-  owner_accepted: "Owner accepted",
-  owner_rejected: "Owner rejected",
-  expired: "Expired",
+const labels: Record<BookingHoldStatus, string> = {
   payment_pending: "Payment pending",
-  confirmed: "Confirmed",
   cancelled: "Cancelled",
-  completed: "Completed",
-  disputed: "Disputed",
-  refunded: "Refunded",
+  expired: "Expired",
+  converted: "Payment verified",
 };
 
-const variants: Record<BookingStatus, BadgeProps["variant"]> = {
-  requested: "default",
-  owner_accepted: "accent",
-  owner_rejected: "danger",
-  expired: "neutral",
+const variants: Record<BookingHoldStatus, BadgeProps["variant"]> = {
   payment_pending: "warning",
-  confirmed: "success",
   cancelled: "neutral",
-  completed: "success",
-  disputed: "danger",
-  refunded: "default",
+  expired: "neutral",
+  converted: "success",
 };
 
-export function BookingStatusBadge({ status }: { status: BookingStatus }) {
+export function BookingStatusBadge({ status }: { status: BookingHoldStatus }) {
   return <Badge variant={variants[status]}>{labels[status]}</Badge>;
 }
