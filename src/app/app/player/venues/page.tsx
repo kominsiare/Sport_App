@@ -1,14 +1,17 @@
-import { VenueBrowserPreview } from "@/components/app/venue-browser-preview";
+import { VenueBrowser } from "@/components/marketplace/venue-browser";
 import { PageShell } from "@/components/layout/page-shell";
+import { getVenueCatalog } from "@/lib/venues/server";
 
-export default function PlayerVenuesPage() {
+export default async function PlayerVenuesPage() {
+  const { venues, sports } = await getVenueCatalog();
+
   return (
     <PageShell
       eyebrow="Player · Venue browsing"
-      title="Venue discovery layout"
-      description="Local mock content demonstrates the reusable card and filter system. No network calls or real venue records are exposed."
+      title="Play across Tricity"
+      description="Browse fictional beta venues backed by the live approved-venue catalog. Filter by sport, city, area, and starting price."
     >
-      <VenueBrowserPreview />
+      <VenueBrowser venues={venues} sports={sports} />
     </PageShell>
   );
 }

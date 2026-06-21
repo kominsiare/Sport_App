@@ -20,14 +20,17 @@ export function SlotCell({
   state = "available",
   onClick,
 }: SlotCellProps) {
+  const readOnly = !onClick;
+
   return (
     <button
       type="button"
-      disabled={state === "booked"}
+      disabled={state === "booked" || readOnly}
       onClick={onClick}
       className={cn(
         "focus-ring min-h-11 rounded-xl border px-3 py-2 text-xs font-semibold transition",
         stateStyles[state],
+        readOnly && "cursor-default disabled:opacity-100",
       )}
     >
       {time}
