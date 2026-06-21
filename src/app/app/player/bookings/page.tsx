@@ -3,15 +3,19 @@ import { PageShell } from "@/components/layout/page-shell";
 import { getPlayerBookingData } from "@/lib/bookings/server";
 
 export default async function PlayerBookingsPage() {
-  const { holds } = await getPlayerBookingData();
+  const { holds, payments, bookings } = await getPlayerBookingData();
 
   return (
     <PageShell
       eyebrow="Player · Bookings"
-      title="Your payment holds"
-      description="A live hold reserves one physical court across its supported sports for ten minutes. Payment and confirmation arrive in Module 6."
+      title="Bookings and payments"
+      description="Pay the fixed ₹500 advance securely. A booking becomes confirmed only after Razorpay sends a verified captured-payment webhook."
     >
-      <BookingHoldList holds={holds} />
+      <BookingHoldList
+        holds={holds}
+        payments={payments}
+        bookings={bookings}
+      />
     </PageShell>
   );
 }

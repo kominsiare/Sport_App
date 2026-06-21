@@ -10,6 +10,7 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 - Module 3 venue browsing migrations: applied.
 - Module 4 owner dashboard migrations: applied.
 - Module 5 booking hold migrations: applied.
+- Module 6 Razorpay payment and service-role hardening migrations: applied.
 - Site URL: `http://localhost:3000`.
 - Redirect URL: `http://localhost:3000/auth/callback`.
 - Web publishable key: stored only in ignored `.env.local`.
@@ -54,7 +55,41 @@ read policies are consolidated to avoid duplicate RLS evaluation.
 
 Module 5 adds immutable ten-minute booking snapshots, physical-court overlap exclusion,
 one-active-hold enforcement, cancellation and expiry RPCs, Player/Owner read isolation,
-and append-only booking audit events. Razorpay is intentionally not connected yet.
+and append-only booking audit events.
+
+Module 6 adds Razorpay order/payment state, webhook-confirmed booking snapshots,
+commission records, idempotent webhook events, and three deployed Edge Functions.
+Razorpay Test Mode credentials and Dashboard webhook registration are the remaining
+provider connection.
+
+## Razorpay Test Mode connection
+
+Create Test Mode API keys in Razorpay, then store them as Supabase Edge Function
+secrets:
+
+```bash
+supabase secrets set \
+  RAZORPAY_KEY_ID=rzp_test_your_key_id \
+  RAZORPAY_KEY_SECRET=your_test_key_secret \
+  RAZORPAY_WEBHOOK_SECRET=your_random_webhook_secret \
+  --project-ref mljvwgboykoynsdqhhvl
+```
+
+In Razorpay **Webhooks**, register:
+
+```text
+https://mljvwgboykoynsdqhhvl.supabase.co/functions/v1/razorpay-webhook
+```
+
+Use the same `RAZORPAY_WEBHOOK_SECRET` and subscribe to:
+
+- `payment.captured`
+- `payment.failed`
+- `order.paid`
+
+Keep Razorpay in Test Mode until the full checkout and webhook QA passes. Never add
+Razorpay secrets to `.env.local`, source files, Git, or browser-exposed environment
+variables.
 
 ## 3. Configure redirect URLs
 

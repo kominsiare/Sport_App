@@ -4,7 +4,9 @@ import {
   HiBuildingOffice2,
   HiCalendarDays,
   HiClock,
+  HiCreditCard,
   HiNoSymbol,
+  HiReceiptPercent,
   HiShieldCheck,
 } from "react-icons/hi2";
 
@@ -51,6 +53,11 @@ export default async function OwnerHomePage() {
       value: metrics.activeBookingHolds,
       icon: HiClock,
     },
+    {
+      label: "Confirmed bookings",
+      value: metrics.confirmedBookings,
+      icon: HiCreditCard,
+    },
   ];
 
   return (
@@ -68,7 +75,7 @@ export default async function OwnerHomePage() {
         </Link>
       }
     >
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         {cards.map((metric) => {
           const Icon = metric.icon;
           return (
@@ -117,11 +124,24 @@ export default async function OwnerHomePage() {
 
         <Card className="p-5">
           <Badge variant="accent">5% platform fee</Badge>
-          <h2 className="mt-5 font-semibold">Commission preview</h2>
+          <h2 className="mt-5 font-semibold">Payment ledger</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Every slot editor shows the estimated 5% commission on the full slot
-            price. It is informational until booking and payments are implemented.
+            Razorpay advances collected:{" "}
+            <strong className="text-foreground">
+              ₹{metrics.advanceCollected.toLocaleString("en-IN")}
+            </strong>
+            . Pllayz commission retained:{" "}
+            <strong className="text-accent">
+              ₹{metrics.commissionCollected.toLocaleString("en-IN")}
+            </strong>
+            .
           </p>
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-border bg-secondary/50 p-3 text-xs">
+            <HiReceiptPercent className="size-5 text-accent" />
+            <span className="text-muted-foreground">
+              Manual owner due: ₹{metrics.ownerDue.toLocaleString("en-IN")}
+            </span>
+          </div>
         </Card>
       </div>
     </PageShell>

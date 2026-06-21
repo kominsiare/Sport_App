@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { BookingHold } from "@/types/database";
+import type { Booking, BookingHold, Payment } from "@/types/database";
 
 async function releaseExpiredHolds() {
   const supabase = await createServerSupabaseClient();
@@ -29,18 +29,31 @@ export async function getActivePlayerBookingHold(): Promise<BookingHold | null> 
 
 export async function getPlayerBookingData(): Promise<{
   holds: BookingHold[];
+  payments: Payment[];
+  bookings: Booking[];
 }> {
   const supabase = await releaseExpiredHolds();
-  const { data: holds, error } = await supabase
-    .from("booking_holds")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [
+    { data: holds, error: holdsError },
+    { data: payments, error: paymentsError },
+    { data: bookings, error: bookingsError },
+  ] = await Promise.all([
+    supabase
+      .from("booking_holds")
+      .select("*")
+      .order("created_at", { ascending: false }),
+    supabase.from("payments").select("*").order("created_at", { ascending: false }),
+    supabase.from("bookings").select("*").order("created_at", { ascending: false }),
+  ]);
 
-  if (error) {
-    throw new Error(`Unable to load booking activity: ${error.message}`);
+  const firstError = holdsError ?? paymentsError ?? bookingsError;
+  if (firstError) {
+    throw new Error(`Unable to load booking activity: ${firstError.message}`);
   }
 
   return {
     holds: holds ?? [],
+    payments: payments ?? [],
+    bookings: bookings ?? [],
   };
 }
