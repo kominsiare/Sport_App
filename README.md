@@ -4,17 +4,19 @@ Pllayz is a Tricity-first, login-gated, multi-sport venue-booking PWA for player
 
 ## Current milestone
 
-Module 1 builds the production frontend foundation:
+Module 2 adds the production authentication boundary:
 
 - Next.js App Router with TypeScript
-- mobile-first responsive app shell
 - installable PWA manifest and service worker
 - Night Match visual system
-- reusable UI and marketplace components
-- public landing and login placeholders
-- player and owner route placeholders
+- Supabase SSR session handling
+- phone OTP, email OTP, and Google sign-in flows
+- immutable Player and Venue Owner account types
+- profile and contact-verification onboarding
+- protected, account-specific workspaces
+- profile RLS, restricted mutation functions, and audit logging
 
-No real authentication, Supabase data, booking mutation, or Razorpay integration is included in Module 1.
+Venue records, booking mutations, Razorpay, and admin operations remain in later modules.
 
 ## Local development
 
@@ -24,6 +26,8 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+To connect authentication, follow [docs/setup/supabase-auth.md](docs/setup/supabase-auth.md).
 
 ## Quality checks
 
