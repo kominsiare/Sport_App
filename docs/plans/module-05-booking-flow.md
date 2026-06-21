@@ -1,8 +1,8 @@
 # Module 5 — Booking Flow
 
-**Status:** Approved  
-**Approved:** 2026-06-21  
-**Rollback point:** Git tag `module-4-complete`  
+**Status:** Approved
+**Approved:** 2026-06-21
+**Rollback point:** Git tag `module-4-complete`
 **Branch:** `rahulevol/module-5-booking-flow`
 
 ## Goal

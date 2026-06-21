@@ -580,6 +580,9 @@ grant execute on function private.cancel_my_booking_hold(uuid) to authenticated;
 revoke all on function public.create_booking_hold(uuid) from public;
 revoke all on function public.cancel_my_booking_hold(uuid) from public;
 revoke all on function public.expire_booking_holds() from public;
+revoke all on function public.create_booking_hold(uuid) from anon;
+revoke all on function public.cancel_my_booking_hold(uuid) from anon;
+revoke all on function public.expire_booking_holds() from anon;
 
 grant execute on function public.create_booking_hold(uuid) to authenticated;
 grant execute on function public.cancel_my_booking_hold(uuid) to authenticated;
