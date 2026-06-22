@@ -59,8 +59,7 @@ and append-only booking audit events.
 
 Module 6 adds Razorpay order/payment state, webhook-confirmed booking snapshots,
 commission records, idempotent webhook events, and three deployed Edge Functions.
-Razorpay Test Mode credentials and Dashboard webhook registration are the remaining
-provider connection.
+Razorpay Test Mode credentials and the signed Dashboard webhook are connected.
 
 ## Razorpay Test Mode connection
 
@@ -90,6 +89,17 @@ Use the same `RAZORPAY_WEBHOOK_SECRET` and subscribe to:
 Keep Razorpay in Test Mode until the full checkout and webhook QA passes. Never add
 Razorpay secrets to `.env.local`, source files, Git, or browser-exposed environment
 variables.
+
+Current Test Mode status:
+
+- API key authentication verified.
+- Edge Function secrets configured.
+- Webhook active at the URL above.
+- `payment.captured`, `payment.failed`, and `order.paid` enabled.
+- Signed webhook readiness check passed.
+- Server-created ₹500 INR order smoke test passed.
+- One interactive Test Checkout and captured webhook confirmation remain before this
+  module is ready for review.
 
 ## 3. Configure redirect URLs
 

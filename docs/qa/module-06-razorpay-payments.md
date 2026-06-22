@@ -1,6 +1,6 @@
 # Module 6 Razorpay Payments QA
 
-**Date:** 2026-06-21
+**Date:** 2026-06-22
 **Branch:** `rahulevol/module-6-razorpay-payments`
 **Rollback tag:** `module-5-complete`
 
@@ -29,6 +29,18 @@
 - Unsigned webhook requests return `400 missing_webhook_headers`.
 - The service role can reach privileged payment transitions; a fake payment ID reaches
   the expected semantic `payment_not_found` error rather than a permission error.
+- Razorpay Test Mode API credentials are stored only as Supabase Edge Function secrets
+  and macOS Keychain items.
+- Razorpay Test API authentication passes against the Orders endpoint.
+- One active Test Mode webhook targets the deployed Supabase HTTPS endpoint.
+- The webhook has a secret and enables only `payment.captured`, `payment.failed`, and
+  `order.paid`.
+- A correctly signed readiness event returns HTTP 200; an unsigned event returns HTTP
+  400.
+- A temporary verified Player created an app order through `razorpay-order`; Razorpay
+  returned `created` for exactly ₹500 INR with the deterministic 37-character receipt.
+- The temporary Player, owner reference, venue assignment, hold, payment, audit, and
+  held-slot state were removed after the order smoke test.
 
 ## Implemented integrity checks
 
@@ -43,10 +55,7 @@
 - Direct authenticated writes to payment, booking, commission, and webhook tables are
   denied.
 
-## Pending provider QA
-
-Razorpay Test Mode credentials are not yet connected. After the keys and webhook secret
-are stored:
+## Pending Checkout QA
 
 - complete one successful test payment;
 - verify Checkout return shows processing, not confirmation;
@@ -56,5 +65,5 @@ are stored:
 - test invalid signatures, amount mismatch, and payment-ID mismatch;
 - inspect Player and Owner screens at desktop and mobile widths.
 
-Automated in-app browser control was unavailable in this session, so final visual and
-real Razorpay Checkout verification remains pending.
+The provider connection, webhook registration, signed-endpoint check, and order creation
+path are complete. Final visual and real Razorpay Checkout verification remains pending.
