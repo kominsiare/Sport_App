@@ -98,8 +98,15 @@ Current Test Mode status:
 - `payment.captured`, `payment.failed`, and `order.paid` enabled.
 - Signed webhook readiness check passed.
 - Server-created ₹500 INR order smoke test passed.
+- All 20 active seed venues have a dedicated verified system owner, so booking and
+  commission owner references are valid.
+- Captured, duplicate, mismatched-amount, and failed webhook scenarios passed with
+  temporary fixtures and cleanup.
 - One interactive Test Checkout and captured webhook confirmation remain before this
   module is ready for review.
+
+The seed-owner credentials are stored only in macOS Keychain. Module 7 Admin operations
+must provide a controlled venue-claim/reassignment workflow before real venue onboarding.
 
 ## 3. Configure redirect URLs
 

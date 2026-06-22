@@ -41,6 +41,18 @@
   returned `created` for exactly ₹500 INR with the deterministic 37-character receipt.
 - The temporary Player, owner reference, venue assignment, hold, payment, audit, and
   held-slot state were removed after the order smoke test.
+- A dedicated verified system-owner identity now owns all 20 previously unowned active
+  seed venues, preserving valid booking and commission ownership until Admin venue
+  claiming/reassignment is implemented.
+- A signed `payment.captured` event created exactly one booking, one 5% commission
+  record, and a captured payment.
+- Redelivery with the same Razorpay event ID was idempotently ignored.
+- A signed captured event with an amount mismatch created no booking and recorded a
+  failed webhook event.
+- A signed `payment.failed` event changed the payment to failed, expired the hold, and
+  released all overlapping physical-court slots.
+- All temporary webhook QA identities, orders, database rows, and slot mutations were
+  removed.
 
 ## Implemented integrity checks
 
@@ -55,15 +67,13 @@
 - Direct authenticated writes to payment, booking, commission, and webhook tables are
   denied.
 
-## Pending Checkout QA
+## Pending interactive QA
 
 - complete one successful test payment;
 - verify Checkout return shows processing, not confirmation;
-- verify the signed webhook creates exactly one booking and commission row;
-- resend the same webhook and confirm it is treated as a duplicate;
-- test a failed payment and confirm the hold/slots are released;
-- test invalid signatures, amount mismatch, and payment-ID mismatch;
+- verify the real Razorpay-generated webhook confirms the booking;
 - inspect Player and Owner screens at desktop and mobile widths.
 
-The provider connection, webhook registration, signed-endpoint check, and order creation
-path are complete. Final visual and real Razorpay Checkout verification remains pending.
+The provider connection, webhook registration, signed-endpoint check, order creation,
+captured/failed webhook transitions, idempotency, amount validation, and cleanup are
+complete. Final visual and real Razorpay Checkout verification remains pending.
