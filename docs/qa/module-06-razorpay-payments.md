@@ -53,6 +53,14 @@
   released all overlapping physical-court slots.
 - All temporary webhook QA identities, orders, database rows, and slot mutations were
   removed.
+- A real interactive Razorpay Test Checkout captured exactly ₹500 INR.
+- Razorpay independently reports the payment as captured against the app-created order.
+- The real `payment.captured` webhook created one confirmed booking and a ₹110
+  commission record from the ₹2,200 immutable booking total.
+- The real `order.paid` webhook was idempotently processed against the same booking.
+- The authenticated Checkout-return callback was verified and appended its audit event.
+- The temporary phone verification used for interactive Test Checkout was fully
+  reverted; the Player profile again has no phone and `can_book = false`.
 
 ## Implemented integrity checks
 
@@ -67,13 +75,11 @@
 - Direct authenticated writes to payment, booking, commission, and webhook tables are
   denied.
 
-## Pending interactive QA
+## Remaining visual QA
 
-- complete one successful test payment;
-- verify Checkout return shows processing, not confirmation;
-- verify the real Razorpay-generated webhook confirms the booking;
-- inspect Player and Owner screens at desktop and mobile widths.
+- Inspect Player and Owner payment screens at desktop and mobile widths.
 
 The provider connection, webhook registration, signed-endpoint check, order creation,
 captured/failed webhook transitions, idempotency, amount validation, and cleanup are
-complete. Final visual and real Razorpay Checkout verification remains pending.
+complete. The real Razorpay Checkout, Checkout-return verification, captured webhook,
+booking confirmation, and commission record also pass.

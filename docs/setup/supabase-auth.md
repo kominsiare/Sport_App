@@ -102,8 +102,11 @@ Current Test Mode status:
   commission owner references are valid.
 - Captured, duplicate, mismatched-amount, and failed webhook scenarios passed with
   temporary fixtures and cleanup.
-- One interactive Test Checkout and captured webhook confirmation remain before this
-  module is ready for review.
+- One interactive Test Checkout captured ₹500 INR and produced the expected confirmed
+  booking and 5% commission record.
+- Temporary Player phone verification was reverted after Checkout.
+- Only the final desktop/mobile visual pass remains before this module is ready for
+  review.
 
 The seed-owner credentials are stored only in macOS Keychain. Module 7 Admin operations
 must provide a controlled venue-claim/reassignment workflow before real venue onboarding.
