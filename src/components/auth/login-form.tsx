@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import type { AccountType } from "@/types/database";
 
 type Method = "phone" | "email";
-type Stage = "identify" | "verify";
+type Stage = "identify" | "verify" | "link-sent";
 
 const errorMessages: Record<string, string> = {
   account_type_conflict:
@@ -37,7 +37,8 @@ const errorMessages: Record<string, string> = {
   callback_failed:
     "That sign-in link is invalid, expired, or was opened outside the browser that requested it. Request a fresh email and try again.",
   oauth_failed: "Google sign-in could not be completed. Please try again.",
-  session_missing: "Your sign-in session expired. Please request a fresh code.",
+  session_missing:
+    "Your sign-in session expired. Please request a fresh sign-in email.",
   profile_failed: "We could not prepare your Pllayz profile. Please try again.",
 };
 
@@ -142,28 +143,21 @@ export function LoginForm({
     }
 
     setSentTo(normalized);
-    setStage("verify");
+    setStage(method === "phone" ? "verify" : "link-sent");
   }
 
   async function verifyCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (otp.length !== 6 || !configured) return;
+    if (method !== "phone" || otp.length !== 6 || !configured) return;
 
     setBusy(true);
     setMessage("");
     const supabase = getBrowserSupabaseClient();
-    const { error } =
-      method === "phone"
-        ? await supabase.auth.verifyOtp({
-            phone: sentTo,
-            token: otp,
-            type: "sms",
-          })
-        : await supabase.auth.verifyOtp({
-            email: sentTo,
-            token: otp,
-            type: "email",
-          });
+    const { error } = await supabase.auth.verifyOtp({
+      phone: sentTo,
+      token: otp,
+      type: "sms",
+    });
 
     if (error) {
       setBusy(false);
@@ -237,7 +231,7 @@ export function LoginForm({
                 <button
                   key={item.value}
                   type="button"
-                  disabled={stage === "verify" || busy}
+                  disabled={stage !== "identify" || busy}
                   onClick={() => {
                     setAccountType(item.value);
                     setMessage("");
@@ -261,7 +255,7 @@ export function LoginForm({
               <button
                 key={item}
                 type="button"
-                disabled={stage === "verify" || busy || !providers[item]}
+                disabled={stage !== "identify" || busy || !providers[item]}
                 onClick={() => resetVerification(item)}
                 className={cn(
                   "focus-ring flex min-h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold capitalize text-muted-foreground transition disabled:cursor-not-allowed disabled:opacity-45",
@@ -273,7 +267,7 @@ export function LoginForm({
                 ) : (
                   <HiEnvelope className="size-4" />
                 )}
-                {item} OTP
+                {item === "phone" ? "Phone OTP" : "Email link"}
               </button>
             ))}
           </div>
@@ -311,18 +305,21 @@ export function LoginForm({
                 size="lg"
                 disabled={!configured || busy}
               >
-                {busy ? "Sending code…" : "Send one-time code"}
+                {busy
+                  ? method === "phone"
+                    ? "Sending code…"
+                    : "Sending link…"
+                  : method === "phone"
+                    ? "Send one-time code"
+                    : "Send secure sign-in link"}
                 {!busy ? <HiArrowRight className="size-5" /> : null}
               </Button>
             </form>
-          ) : (
+          ) : stage === "verify" ? (
             <form className="mt-5" onSubmit={verifyCode}>
               <p className="text-sm font-medium">Enter the six-digit code</p>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
                 Sent to {sentTo}.
-                {method === "email"
-                  ? " You can enter the code or open the secure sign-in link in the email."
-                  : null}
               </p>
               <OtpInput
                 key={`${method}-${sentTo}`}
@@ -349,6 +346,26 @@ export function LoginForm({
                 Change {method === "phone" ? "number" : "email"}
               </Button>
             </form>
+          ) : (
+            <div className="mt-5">
+              <span className="grid size-11 place-items-center rounded-xl bg-accent/10 text-accent">
+                <HiEnvelope className="size-5" />
+              </span>
+              <h2 className="mt-4 font-semibold">Check your email</h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                We sent a secure, one-use sign-in link to {sentTo}. Open it in
+                this browser to continue.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-3 px-0 text-muted-foreground"
+                disabled={busy}
+                onClick={() => resetVerification("email")}
+              >
+                Change email or resend
+              </Button>
+            </div>
           )}
 
           <div className="my-6 flex items-center gap-3">
@@ -362,7 +379,7 @@ export function LoginForm({
           <Button
             variant="outline"
             className="w-full"
-            disabled={!configured || !providers.google || busy || stage === "verify"}
+            disabled={!configured || !providers.google || busy || stage !== "identify"}
             onClick={continueWithGoogle}
           >
             <FcGoogle className="size-5" />

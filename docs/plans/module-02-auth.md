@@ -12,7 +12,7 @@ Add secure, login-gated access with Supabase Auth while preserving separate Play
 ## Confirmed decisions
 
 - Authentication provider: Supabase Auth.
-- Login methods: phone OTP, email OTP, Google.
+- Login methods: phone OTP, secure email link on the connected Free project, Google.
 - Account types are separate: `player` or `owner`.
 - Account type is selected before signup and becomes immutable.
 - The same verified phone or email cannot belong to both account types.
@@ -28,7 +28,7 @@ Add secure, login-gated access with Supabase Auth while preserving separate Play
 ## Included
 
 - Supabase SSR clients and session refresh proxy.
-- Phone OTP, email OTP, and Google OAuth flows.
+- Phone OTP, secure email-link, and Google OAuth flows.
 - OAuth callback and OTP verification.
 - Profile onboarding and contact-completion states.
 - Account-type-aware redirects and protected routes.
@@ -59,7 +59,7 @@ Add secure, login-gated access with Supabase Auth while preserving separate Play
 - Player sessions cannot open Owner routes.
 - Owner sessions cannot open Player routes.
 - Existing users cannot sign in under a different account type.
-- Email OTP, phone OTP, Google callback, logout, and session refresh paths work.
+- Email link, phone OTP, Google callback, logout, and session refresh paths work.
 - Profile completion requirements differ correctly by account type.
 - RLS exposes only the signed-in user’s profile.
 - Production build, lint, and TypeScript pass without secrets.

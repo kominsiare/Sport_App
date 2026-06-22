@@ -119,11 +119,21 @@ In **Authentication → URL Configuration**:
 The localhost values are already configured. Production values remain pending until the
 application has a stable deployment URL.
 
-## 4. Configure email OTP
+## 4. Configure email sign-in
 
 Enable Email authentication.
 
-Use `{{ .Token }}` in the email template when you want a six-digit OTP rather than a magic link.
+The connected Free project currently uses Supabase's default secure Magic Link email.
+The app labels this accurately as **Email link**.
+
+Supabase projects created after June 3, 2026 cannot customize Auth email templates
+while using the default email provider on the Free plan. To switch to a six-digit email
+OTP later:
+
+1. Configure custom SMTP or upgrade to a plan that permits template customization.
+2. Change the Magic Link template to use `{{ .Token }}` instead of
+   `{{ .ConfirmationURL }}`.
+3. Restore the six-digit email-code entry state in the login UI.
 
 Supabase’s default email service is suitable only for development. Configure custom SMTP before public beta.
 

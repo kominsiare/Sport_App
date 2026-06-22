@@ -64,8 +64,8 @@ Verified on the local Next.js development server:
 
 ## Remaining provider-gated checks
 
-- Configure custom SMTP, change the email template to use `{{ .Token }}`, and verify
-  six-digit email OTP delivery.
+- The connected Free project uses Supabase's default one-use email sign-in link.
+  Configure custom SMTP before switching the template and UI to six-digit email OTP.
 - Configure Twilio Verify and verify phone OTP delivery.
 - Configure a Google OAuth web client and verify its callback.
 - Run Venue Owner onboarding with a separate real contact.
