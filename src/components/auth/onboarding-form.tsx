@@ -17,6 +17,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { OtpInput } from "@/components/ui/otp-input";
 import { getBrowserSupabaseClient } from "@/lib/supabase/client";
+import type { AuthProviderAvailability } from "@/lib/supabase/auth-settings";
 import type { Profile, TricityCity } from "@/types/database";
 
 const cities: TricityCity[] = ["Chandigarh", "Mohali", "Panchkula"];
@@ -47,9 +48,11 @@ function detailsComplete(profile: Profile) {
 export function OnboardingForm({
   initialProfile,
   nextPath,
+  providers,
 }: {
   initialProfile: Profile;
   nextPath: string;
+  providers: AuthProviderAvailability;
 }) {
   const [profile, setProfile] = useState(initialProfile);
   const [fullName, setFullName] = useState(initialProfile.full_name ?? "");
@@ -303,7 +306,12 @@ export function OnboardingForm({
                   <span className="text-xs font-semibold text-accent">Verified</span>
                 ) : null}
               </div>
-              {!phoneVerified && pendingContact?.kind !== "phone" ? (
+              {!phoneVerified && !providers.phone ? (
+                <p className="mt-4 text-xs leading-5 text-amber-200">
+                  Mobile verification is unavailable until Twilio Verify is
+                  configured for this environment.
+                </p>
+              ) : !phoneVerified && pendingContact?.kind !== "phone" ? (
                 <div className="mt-4 grid gap-3">
                   <Input
                     type="tel"
@@ -339,7 +347,11 @@ export function OnboardingForm({
                   <span className="text-xs font-semibold text-accent">Verified</span>
                 ) : null}
               </div>
-              {!emailVerified && pendingContact?.kind !== "email" ? (
+              {!emailVerified && !providers.email ? (
+                <p className="mt-4 text-xs leading-5 text-amber-200">
+                  Email verification is unavailable in this environment.
+                </p>
+              ) : !emailVerified && pendingContact?.kind !== "email" ? (
                 <div className="mt-4 grid gap-3">
                   <Input
                     type="email"
@@ -430,7 +442,9 @@ export function OnboardingForm({
           <p className="mt-2 text-xs leading-5 text-muted-foreground">
             {!profile.profile_complete
               ? owner
-                ? "Save your details and verify both contacts to enter the owner workspace."
+                ? providers.phone
+                  ? "Save your details and verify both contacts to enter the owner workspace."
+                  : "Save your details, then configure Twilio Verify and verify your mobile number to enter the owner workspace."
                 : "Save your details and verify at least one contact to browse venues."
               : !profile.can_book && !owner
                 ? "Browsing is ready. Verify your mobile number before your first booking."

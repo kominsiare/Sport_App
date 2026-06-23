@@ -105,11 +105,17 @@ Current Test Mode status:
 - One interactive Test Checkout captured ₹500 INR and produced the expected confirmed
   booking and 5% commission record.
 - Temporary Player phone verification was reverted after Checkout.
-- Only the final desktop/mobile visual pass remains before this module is ready for
-  review.
+- Player and Owner payment screens passed desktop and exact 390px mobile visual QA
+  without overflow, clipping, incorrect payment states, or final route runtime errors.
+- Module 6 is ready for review.
 
 The seed-owner credentials are stored only in macOS Keychain. Module 7 Admin operations
 must provide a controlled venue-claim/reassignment workflow before real venue onboarding.
+
+An Owner created through email remains onboarding-gated until both email and mobile are
+verified, as required by Module 2. While the phone provider is unavailable, onboarding
+now explains that Twilio Verify must be configured instead of presenting mobile
+verification as an available action.
 
 ## 3. Configure redirect URLs
 

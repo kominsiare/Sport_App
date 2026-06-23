@@ -1,6 +1,6 @@
 # Module 6 Razorpay Payments QA
 
-**Date:** 2026-06-22
+**Date:** 2026-06-23
 **Branch:** `rahulevol/module-6-razorpay-payments`
 **Rollback tag:** `module-5-complete`
 
@@ -75,11 +75,31 @@
 - Direct authenticated writes to payment, booking, commission, and webhook tables are
   denied.
 
-## Remaining visual QA
+## Visual QA
 
-- Inspect Player and Owner payment screens at desktop and mobile widths.
+- Player booking/payment receipt passed at 1280px desktop and 390px mobile:
+  booking `1492DA94`, `Booking confirmed`, `Paid`, `Razorpay verified`,
+  ₹500 paid, and ₹1,700 remaining were readable without horizontal overflow,
+  clipping, or broken spacing.
+- Owner dashboard passed at 1280px desktop and exactly 390px mobile:
+  one confirmed booking, ₹500 Razorpay advances collected, ₹110 Pllayz
+  commission retained, and ₹0 manual owner due were readable and correctly
+  stacked at both widths.
+- Owner Activity passed at 1280px desktop and exactly 390px mobile:
+  `Webhook confirmed`, `Confirmed`, `Paid`, ₹2,200 booking total, ₹500 paid,
+  ₹110 Pllayz fee, ₹390 owner advance credit, and ₹0 manual owner due all
+  rendered without overflow, clipping, unreadable text, or incorrect payment
+  states.
+- The final desktop and mobile route loads returned HTTP 200 with no browser
+  console/runtime errors in the development server log.
+- No Checkout, order-creation, payment, refund, or settlement action was
+  initiated during visual QA.
+- Owner onboarding now explicitly explains that Twilio Verify must be
+  configured before an email-created Owner can verify a mobile number and
+  enter the workspace.
 
 The provider connection, webhook registration, signed-endpoint check, order creation,
 captured/failed webhook transitions, idempotency, amount validation, and cleanup are
 complete. The real Razorpay Checkout, Checkout-return verification, captured webhook,
-booking confirmation, and commission record also pass.
+booking confirmation, commission record, and responsive Player/Owner visual QA also
+pass.

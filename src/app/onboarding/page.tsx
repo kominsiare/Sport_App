@@ -6,6 +6,7 @@ import { Brand } from "@/components/brand/brand";
 import { OnboardingForm } from "@/components/auth/onboarding-form";
 import { safeAppPath, workspacePath } from "@/lib/auth/navigation";
 import { getCurrentAccount } from "@/lib/auth/server";
+import { getAuthProviderAvailability } from "@/lib/supabase/auth-settings";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default async function OnboardingPage({
   if (!account.profile) redirect("/login?error=profile_failed");
 
   const params = await searchParams;
+  const providers = await getAuthProviderAvailability();
   const requestedNext = safeAppPath(params.next);
   const workspace = workspacePath(account.profile.account_type);
   const accountPrefix = `/app/${account.profile.account_type}`;
@@ -65,7 +67,11 @@ export default async function OnboardingPage({
         </div>
 
         <div className="mt-8">
-          <OnboardingForm initialProfile={account.profile} nextPath={nextPath} />
+          <OnboardingForm
+            initialProfile={account.profile}
+            nextPath={nextPath}
+            providers={providers}
+          />
         </div>
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
