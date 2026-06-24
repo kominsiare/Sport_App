@@ -122,13 +122,12 @@ verification as an available action.
 In **Authentication → URL Configuration**:
 
 - Production Site URL: `https://pllayz-app.vercel.app`
-- Additional redirect URL: `http://localhost:3000/auth/callback`
-- Additional redirect URL: `https://pllayz-app.vercel.app/auth/callback`
+- Hosted redirect allow-list: `https://pllayz-app.vercel.app/**`
 
-Keep `http://localhost:3000/auth/callback` while local development remains active.
-Supabase falls back to the configured Site URL when the requested callback is not
-allow-listed, so production email links will incorrectly land on localhost until the
-Vercel callback URL is saved in the hosted Supabase project.
+The hosted Supabase project is intentionally Vercel-only for tester sign-in. Local
+development redirects should be added only when actively testing the local app, then
+removed again before sharing the hosted PWA. Supabase falls back to the configured Site
+URL when the requested callback is not allow-listed.
 
 ## 4. Configure email sign-in
 
@@ -136,6 +135,13 @@ Enable Email authentication.
 
 The connected Free project currently uses Supabase's default secure Magic Link email.
 The app labels this accurately as **Email link**.
+
+The hosted Free project cannot customize Auth email templates while using Supabase's
+default email provider. To keep the PWA usable without upgrading or adding SMTP, email
+sign-in requests use Supabase's implicit magic-link flow and redirect to
+`/auth/confirm?account_type=...&next=...`. The `/auth/confirm` client page reads the
+one-time session from the URL fragment, calls `/auth/session` to store the session in
+SSR cookies, and then routes the user to onboarding or the correct workspace.
 
 Supabase projects created after June 3, 2026 cannot customize Auth email templates
 while using the default email provider on the Free plan. To switch to a six-digit email

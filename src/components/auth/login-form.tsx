@@ -19,7 +19,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { OtpInput } from "@/components/ui/otp-input";
-import { getBrowserSupabaseClient } from "@/lib/supabase/client";
+import {
+  getBrowserSupabaseClient,
+  getImplicitBrowserSupabaseClient,
+} from "@/lib/supabase/client";
 import type { AuthProviderAvailability } from "@/lib/supabase/auth-settings";
 import { cn } from "@/lib/utils";
 import type { AccountType } from "@/types/database";
@@ -35,7 +38,7 @@ const errorMessages: Record<string, string> = {
   connection_required:
     "Supabase is not connected yet. Add the project URL and publishable key to .env.local.",
   callback_failed:
-    "That sign-in link is invalid, expired, or was opened outside the browser that requested it. Request a fresh email and try again.",
+    "That sign-in link is invalid or expired. Request a fresh email and try again.",
   oauth_failed: "Google sign-in could not be completed. Please try again.",
   session_missing:
     "Your sign-in session expired. Please request a fresh sign-in email.",
@@ -65,10 +68,10 @@ function readableAuthError(message: string) {
   return message;
 }
 
-function buildAuthCallbackUrl(accountType: AccountType, nextPath: string) {
+function buildAuthUrl(path: "/auth/callback" | "/auth/confirm", accountType: AccountType, nextPath: string) {
   const configuredOrigin = process.env.NEXT_PUBLIC_APP_URL?.trim();
   const baseOrigin = configuredOrigin || window.location.origin;
-  const callbackUrl = new URL("/auth/callback", baseOrigin);
+  const callbackUrl = new URL(path, baseOrigin);
 
   callbackUrl.searchParams.set("account_type", accountType);
   callbackUrl.searchParams.set("next", nextPath);
@@ -122,21 +125,20 @@ export function LoginForm({
     setBusy(true);
     setMessage("");
 
-    const supabase = getBrowserSupabaseClient();
     const { error } =
       method === "phone"
-        ? await supabase.auth.signInWithOtp({
+        ? await getBrowserSupabaseClient().auth.signInWithOtp({
             phone: normalized,
             options: {
               shouldCreateUser: true,
               data: { account_type: accountType },
             },
           })
-        : await supabase.auth.signInWithOtp({
+        : await getImplicitBrowserSupabaseClient().auth.signInWithOtp({
             email: normalized,
             options: {
               shouldCreateUser: true,
-              emailRedirectTo: buildAuthCallbackUrl(accountType, nextPath),
+              emailRedirectTo: buildAuthUrl("/auth/confirm", accountType, nextPath),
               data: { account_type: accountType },
             },
           });
@@ -184,7 +186,7 @@ export function LoginForm({
     setBusy(true);
     setMessage("");
     const supabase = getBrowserSupabaseClient();
-    const callbackUrl = buildAuthCallbackUrl(accountType, nextPath);
+    const callbackUrl = buildAuthUrl("/auth/callback", accountType, nextPath);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
