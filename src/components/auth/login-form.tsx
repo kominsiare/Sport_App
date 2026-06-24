@@ -65,6 +65,17 @@ function readableAuthError(message: string) {
   return message;
 }
 
+function buildAuthCallbackUrl(accountType: AccountType, nextPath: string) {
+  const configuredOrigin = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  const baseOrigin = configuredOrigin || window.location.origin;
+  const callbackUrl = new URL("/auth/callback", baseOrigin);
+
+  callbackUrl.searchParams.set("account_type", accountType);
+  callbackUrl.searchParams.set("next", nextPath);
+
+  return callbackUrl.toString();
+}
+
 export function LoginForm({
   nextPath = "/app",
   configured,
@@ -125,12 +136,7 @@ export function LoginForm({
             email: normalized,
             options: {
               shouldCreateUser: true,
-              emailRedirectTo: (() => {
-                const callbackUrl = new URL("/auth/callback", window.location.origin);
-                callbackUrl.searchParams.set("account_type", accountType);
-                callbackUrl.searchParams.set("next", nextPath);
-                return callbackUrl.toString();
-              })(),
+              emailRedirectTo: buildAuthCallbackUrl(accountType, nextPath),
               data: { account_type: accountType },
             },
           });
@@ -178,14 +184,12 @@ export function LoginForm({
     setBusy(true);
     setMessage("");
     const supabase = getBrowserSupabaseClient();
-    const callbackUrl = new URL("/auth/callback", window.location.origin);
-    callbackUrl.searchParams.set("account_type", accountType);
-    callbackUrl.searchParams.set("next", nextPath);
+    const callbackUrl = buildAuthCallbackUrl(accountType, nextPath);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: callbackUrl.toString(),
+        redirectTo: callbackUrl,
       },
     });
 

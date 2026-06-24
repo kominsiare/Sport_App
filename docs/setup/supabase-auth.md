@@ -121,12 +121,14 @@ verification as an available action.
 
 In **Authentication → URL Configuration**:
 
-- Site URL: `http://localhost:3000` for local development.
+- Production Site URL: `https://pllayz-app.vercel.app`
 - Additional redirect URL: `http://localhost:3000/auth/callback`
-- Add the production origin and `/auth/callback` after deployment.
+- Additional redirect URL: `https://pllayz-app.vercel.app/auth/callback`
 
-The localhost values are already configured. Production values remain pending until the
-application has a stable deployment URL.
+Keep `http://localhost:3000/auth/callback` while local development remains active.
+Supabase falls back to the configured Site URL when the requested callback is not
+allow-listed, so production email links will incorrectly land on localhost until the
+Vercel callback URL is saved in the hosted Supabase project.
 
 ## 4. Configure email sign-in
 
