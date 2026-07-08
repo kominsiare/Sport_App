@@ -11,8 +11,7 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 - Module 4 owner dashboard migrations: applied.
 - Module 5 booking hold migrations: applied.
 - Module 6 Razorpay payment and service-role hardening migrations: applied.
-- Module 7 team matchmaking migration: code committed locally; remote application
-  pending fresh Supabase DB credentials or SQL Editor execution.
+- Module 7 team matchmaking migration: applied and verified on 2026-07-08.
 - Site URL: `http://localhost:3000`.
 - Redirect URL: `http://localhost:3000/auth/callback`.
 - Web publishable key: stored only in ignored `.env.local`.
@@ -72,15 +71,12 @@ order, payment, refund, or settlement. The migration file is:
 supabase/migrations/20260708100000_module_7_team_matchmaking.sql
 ```
 
-As of 2026-07-08, the migration could not be applied from this Codex session because
-the saved `supabase/.temp/pooler-url` password is stale and no Supabase SQL execution
-tool/CLI token is available. Apply the migration through the Supabase SQL Editor or
-with a refreshed `supabase db push`, then verify that `matchmaking_posts`,
-`matchmaking_feed`, `create_matchmaking_post`, `join_matchmaking_post`,
-`cancel_my_matchmaking_post`, and `expire_matchmaking_posts` exist in the hosted
-project. The app includes a defensive fallback so pages do not crash if code reaches
-Vercel before the migration, but matchmaking actions become functional only after the
-database migration is live.
+As of 2026-07-08, this migration is live in the hosted Supabase project. Remote
+verification confirmed `matchmaking_posts`, `matchmaking_feed`,
+`create_matchmaking_post`, `join_matchmaking_post`, `cancel_my_matchmaking_post`, and
+`expire_matchmaking_posts`. Supabase DB lint reported no schema errors after the push.
+The app keeps a defensive fallback so pages do not crash if a future environment is
+missing the Module 7 objects.
 
 ## Razorpay Test Mode connection
 

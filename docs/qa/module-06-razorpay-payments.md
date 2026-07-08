@@ -116,8 +116,11 @@ pass.
   checkout or payment.
 - Added `supabase/migrations/20260708100000_module_7_team_matchmaking.sql` with
   `matchmaking_posts`, `matchmaking_feed`, RLS, and RPCs for create/join/cancel/expire.
-- Remote Supabase application is pending because the saved pooler credential failed
-  authentication and no SQL execution tool/CLI token was available in this session.
+- Remote Supabase application passed on the retry: `supabase db push --linked --yes`
+  applied `20260708100000_module_7_team_matchmaking.sql`.
+- Remote verification confirmed `matchmaking_posts`, `matchmaking_feed`, and all 4
+  public matchmaking RPCs.
+- Supabase DB lint after the migration reported no schema errors.
 - Local checks passed: ESLint, TypeScript, and `next build`.
 - Dev server HTTP smoke passed: `/` returned 200, `/login?next=/app/player/opponents`
   returned 200, and unauthenticated `/app/player/opponents` correctly redirected to
