@@ -43,9 +43,9 @@ export function LandingPage() {
   const playerHref = `/login?next=${encodeURIComponent("/app/player/venues")}&sport=${sport.toLowerCase()}`;
 
   return (
-    <main className="min-h-dvh overflow-hidden bg-background">
+    <main className="arena-surface min-h-dvh overflow-hidden bg-background">
       <section className="relative mx-auto max-w-[1480px] lg:grid lg:min-h-dvh lg:grid-cols-[1.08fr_0.92fr]">
-        <div className="relative min-h-[405px] overflow-hidden border-b border-border md:min-h-[500px] lg:min-h-dvh lg:border-b-0 lg:border-r">
+        <div className="relative min-h-[405px] overflow-hidden border-b border-white/10 md:min-h-[500px] lg:min-h-dvh lg:border-b-0 lg:border-r">
           <Image
             src="/assets/night-match-hero.png"
             alt="Cricket, football and racket-sport players competing under floodlights"
@@ -133,8 +133,8 @@ export function LandingPage() {
               </Link>
             </div>
 
-            <section className="relative mt-4 rounded-2xl border border-border bg-[#081020]/90 px-4 pb-1 pt-5 text-center md:mt-7 md:px-5 md:pb-4 md:pt-8">
-              <span className="absolute left-1/2 top-0 grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-border bg-[#101b34] text-[#8ca6ff] shadow-xl md:size-12">
+            <section className="glass-panel relative mt-4 rounded-[2rem] px-4 pb-1 pt-5 text-center md:mt-7 md:px-5 md:pb-4 md:pt-8">
+              <span className="absolute left-1/2 top-0 grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl border border-white/10 bg-[#101b34] text-[#8ca6ff] shadow-xl md:size-12">
                 <HiLockClosed className="size-5 md:size-6" />
               </span>
               <h2 className="text-base font-semibold md:text-lg">
@@ -153,7 +153,7 @@ export function LandingPage() {
               />
             </section>
 
-            <div className="mt-4 grid grid-cols-3 divide-x divide-border border-y border-border py-2 md:mt-7 md:py-5">
+            <div className="glass-panel mt-4 grid grid-cols-3 divide-x divide-white/10 rounded-[1.75rem] py-2 md:mt-7 md:py-5">
               {trustItems.map((item) => {
                 const Icon = item.icon;
                 return (

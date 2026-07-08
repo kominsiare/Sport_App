@@ -11,6 +11,8 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 - Module 4 owner dashboard migrations: applied.
 - Module 5 booking hold migrations: applied.
 - Module 6 Razorpay payment and service-role hardening migrations: applied.
+- Module 7 team matchmaking migration: code committed locally; remote application
+  pending fresh Supabase DB credentials or SQL Editor execution.
 - Site URL: `http://localhost:3000`.
 - Redirect URL: `http://localhost:3000/auth/callback`.
 - Web publishable key: stored only in ignored `.env.local`.
@@ -60,6 +62,25 @@ and append-only booking audit events.
 Module 6 adds Razorpay order/payment state, webhook-confirmed booking snapshots,
 commission records, idempotent webhook events, and three deployed Edge Functions.
 Razorpay Test Mode credentials and the signed Dashboard webhook are connected.
+
+Module 7 adds team opponent matchmaking on top of confirmed bookings. A Player can
+publish a future confirmed booking as an open opponent search, and one other verified
+Player team can join that same slot without creating another booking hold, Razorpay
+order, payment, refund, or settlement. The migration file is:
+
+```text
+supabase/migrations/20260708100000_module_7_team_matchmaking.sql
+```
+
+As of 2026-07-08, the migration could not be applied from this Codex session because
+the saved `supabase/.temp/pooler-url` password is stale and no Supabase SQL execution
+tool/CLI token is available. Apply the migration through the Supabase SQL Editor or
+with a refreshed `supabase db push`, then verify that `matchmaking_posts`,
+`matchmaking_feed`, `create_matchmaking_post`, `join_matchmaking_post`,
+`cancel_my_matchmaking_post`, and `expire_matchmaking_posts` exist in the hosted
+project. The app includes a defensive fallback so pages do not crash if code reaches
+Vercel before the migration, but matchmaking actions become functional only after the
+database migration is live.
 
 ## Razorpay Test Mode connection
 

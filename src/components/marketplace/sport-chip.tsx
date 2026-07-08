@@ -47,9 +47,9 @@ export function SportChip({
     >
       <span
         className={cn(
-          "grid size-11 place-items-center rounded-full border border-border bg-[#071020] text-foreground transition duration-200 group-hover:border-primary/70 md:size-14",
+          "grid size-11 place-items-center rounded-2xl border border-white/10 bg-white/[0.045] text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition duration-200 group-hover:border-accent/60 group-hover:text-accent md:size-14",
           selected &&
-            "blue-glow border-[#6383ff] bg-primary text-white group-hover:border-[#7f99ff]",
+            "blue-glow border-[#6383ff] bg-primary text-white group-hover:border-[#7f99ff] group-hover:text-white",
           compact && "size-8 border-0 bg-transparent",
         )}
       >

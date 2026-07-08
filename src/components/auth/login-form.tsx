@@ -202,7 +202,7 @@ export function LoginForm({
   }
 
   return (
-    <main className="night-grid min-h-dvh px-4 py-6 md:grid md:place-items-center md:py-12">
+    <main className="arena-surface night-grid min-h-dvh px-4 py-6 md:grid md:place-items-center md:py-12">
       <div className="mx-auto w-full max-w-md">
         <div className="flex items-center justify-between">
           <Brand compact />
@@ -215,11 +215,13 @@ export function LoginForm({
           </Link>
         </div>
 
-        <Card className="blue-glow mt-10 border-primary/35 bg-[#071020]/95 p-5 md:p-7">
-          <span className="grid size-12 place-items-center rounded-full bg-primary/15 text-accent">
+        <Card className="blue-glow mt-10 border-primary/35 p-5 md:p-7">
+          <span className="grid size-12 place-items-center rounded-2xl bg-primary/15 text-accent ring-1 ring-primary/25">
             <HiLockClosed className="size-6" />
           </span>
-          <h1 className="mt-5 text-2xl font-bold tracking-tight">Enter the Pllayz arena</h1>
+          <h1 className="font-display mt-5 text-3xl font-semibold uppercase leading-none tracking-[-0.035em]">
+            Enter the Pllayz arena
+          </h1>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Select the account you want to use. This choice is permanent so player and
             venue permissions never get mixed.
@@ -256,7 +258,7 @@ export function LoginForm({
             })}
           </div>
 
-          <div className="mt-5 grid grid-cols-2 rounded-xl border border-border bg-background p-1">
+          <div className="mt-5 grid grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.04] p-1">
             {(["phone", "email"] as Method[]).map((item) => (
               <button
                 key={item}

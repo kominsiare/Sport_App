@@ -41,7 +41,7 @@ export function VenueCard({
       : price;
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:border-primary/55 hover:shadow-[0_18px_48px_rgba(23,82,255,0.16)]">
+    <article className="stadium-card group rounded-3xl transition hover:-translate-y-0.5 hover:border-primary/55 hover:shadow-[0_24px_70px_rgba(43,99,255,0.22)]">
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={image}

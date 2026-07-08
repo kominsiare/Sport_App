@@ -23,6 +23,7 @@ export type BookingStatus =
   | "completed"
   | "disputed"
   | "refunded";
+export type MatchmakingStatus = "open" | "matched" | "cancelled" | "expired";
 export type CommissionCollectionStatus =
   | "collected_from_advance"
   | "partially_collected_owner_due"
@@ -262,6 +263,39 @@ export type Booking = {
   updated_at: string;
 };
 
+export type MatchmakingPost = {
+  id: string;
+  booking_id: string;
+  host_user_id: string;
+  opponent_user_id: string | null;
+  owner_user_id: string;
+  venue_id: string | null;
+  court_id: string | null;
+  sport_id: string | null;
+  slot_id: string | null;
+  status: MatchmakingStatus;
+  host_team_name: string;
+  opponent_team_name: string | null;
+  skill_level: string | null;
+  host_note: string | null;
+  opponent_note: string | null;
+  expires_at: string;
+  matched_at: string | null;
+  cancelled_at: string | null;
+  snapshot_venue_name: string;
+  snapshot_venue_city: TricityCity;
+  snapshot_venue_area: string;
+  snapshot_court_name: string;
+  snapshot_court_type: string;
+  snapshot_sport_name: string;
+  snapshot_start_time: string;
+  snapshot_end_time: string;
+  snapshot_duration_minutes: number;
+  snapshot_total_amount: number;
+  created_at: string;
+  updated_at: string;
+};
+
 export type CommissionRecord = {
   id: string;
   booking_id: string;
@@ -312,6 +346,8 @@ export type VenueCatalogRow = {
   sports: string[];
   sport_slugs: string[];
 };
+
+export type MatchmakingFeedRow = MatchmakingPost;
 
 export type Database = {
   public: {
@@ -548,6 +584,12 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      matchmaking_posts: {
+        Row: MatchmakingPost;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
       commission_records: {
         Row: CommissionRecord;
         Insert: never;
@@ -564,6 +606,10 @@ export type Database = {
     Views: {
       venue_catalog: {
         Row: VenueCatalogRow;
+        Relationships: [];
+      };
+      matchmaking_feed: {
+        Row: MatchmakingFeedRow;
         Relationships: [];
       };
     };
@@ -605,6 +651,31 @@ export type Database = {
         Returns: BookingHold;
       };
       expire_booking_holds: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
+      create_matchmaking_post: {
+        Args: {
+          p_booking_id: string;
+          p_team_name: string;
+          p_skill_level?: string | null;
+          p_note?: string | null;
+        };
+        Returns: MatchmakingPost;
+      };
+      join_matchmaking_post: {
+        Args: {
+          p_post_id: string;
+          p_team_name: string;
+          p_note?: string | null;
+        };
+        Returns: MatchmakingPost;
+      };
+      cancel_my_matchmaking_post: {
+        Args: { p_post_id: string };
+        Returns: MatchmakingPost;
+      };
+      expire_matchmaking_posts: {
         Args: Record<string, never>;
         Returns: number;
       };
@@ -678,6 +749,7 @@ export type Database = {
       booking_hold_status: BookingHoldStatus;
       payment_status: PaymentStatus;
       booking_status: BookingStatus;
+      matchmaking_status: MatchmakingStatus;
       commission_collection_status: CommissionCollectionStatus;
       webhook_processing_status: WebhookProcessingStatus;
     };

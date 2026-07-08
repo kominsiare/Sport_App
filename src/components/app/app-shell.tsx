@@ -14,6 +14,7 @@ import {
   HiMagnifyingGlass,
   HiShieldCheck,
   HiUser,
+  HiUserGroup,
   HiXMark,
 } from "react-icons/hi2";
 
@@ -33,6 +34,7 @@ const playerNav: NavItem[] = [
   { href: "/app/player", label: "Home", icon: HiHome },
   { href: "/app/player/venues", label: "Venues", icon: HiMagnifyingGlass },
   { href: "/app/player/bookings", label: "Bookings", icon: HiCalendarDays },
+  { href: "/app/player/opponents", label: "Opponents", icon: HiUserGroup },
   { href: "/app/profile", label: "Profile", icon: HiUser },
 ];
 
@@ -67,11 +69,17 @@ function NavLinks({
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "focus-ring flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground",
-              active && "bg-primary/15 text-white",
+              "focus-ring group flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-medium text-muted-foreground transition hover:bg-white/[0.06] hover:text-foreground",
+              active &&
+                "border border-primary/25 bg-primary/15 text-white shadow-[0_12px_32px_rgba(23,82,255,0.18)]",
             )}
           >
-            <Icon className={cn("size-5", active && "text-accent")} />
+            <Icon
+              className={cn(
+                "size-5 transition group-hover:text-accent",
+                active && "text-accent",
+              )}
+            />
             {item.label}
           </Link>
         );
@@ -82,9 +90,9 @@ function NavLinks({
 
 function AccountSummary({ profile }: { profile: Profile }) {
   return (
-    <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+    <div className="rounded-3xl border border-white/10 bg-white/[0.045] p-4 shadow-[0_18px_48px_rgba(0,0,0,0.22)] backdrop-blur">
       <div className="flex items-start gap-3">
-        <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent/10 text-accent">
+        <span className="grid size-9 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent ring-1 ring-accent/20">
           <HiShieldCheck className="size-5" />
         </span>
         <div className="min-w-0">
@@ -134,8 +142,8 @@ export function AppShell({
   const items = ownerMode ? ownerNav : playerNav;
 
   return (
-    <div className="min-h-dvh bg-background">
-      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-xl md:hidden">
+    <div className="arena-surface min-h-dvh bg-background">
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-background/80 backdrop-blur-xl md:hidden">
         <div className="flex h-16 items-center justify-between px-4">
           <Brand compact />
           <Button
@@ -150,8 +158,8 @@ export function AppShell({
       </header>
 
       {mobileOpen ? (
-        <div className="fixed inset-0 z-50 bg-black/75 md:hidden">
-          <aside className="ml-auto flex h-full w-[min(86vw,340px)] flex-col border-l border-border bg-card p-4">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm md:hidden">
+          <aside className="glass-panel ml-auto flex h-full w-[min(86vw,340px)] flex-col rounded-l-[2rem] border-l border-white/10 p-4">
             <div className="flex items-center justify-between">
               <Brand compact />
               <Button
@@ -186,7 +194,7 @@ export function AppShell({
       ) : null}
 
       <div className="mx-auto grid min-h-dvh max-w-[1480px] md:grid-cols-[260px_1fr]">
-        <aside className="sticky top-0 hidden h-dvh border-r border-border bg-[#050b17] p-5 md:flex md:flex-col">
+        <aside className="sticky top-0 hidden h-dvh border-r border-white/10 bg-[#050b17]/78 p-5 backdrop-blur-xl md:flex md:flex-col">
           <Brand />
           <div className="mt-10 flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">

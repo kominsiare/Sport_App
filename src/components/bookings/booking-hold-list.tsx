@@ -13,6 +13,8 @@ import {
   HiMapPin,
   HiReceiptPercent,
   HiShieldCheck,
+  HiSparkles,
+  HiUserGroup,
   HiXMark,
 } from "react-icons/hi2";
 
@@ -21,9 +23,16 @@ import { PaymentStatusBadge } from "@/components/payments/payment-status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { getBrowserSupabaseClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
-import type { Booking, BookingHold, Payment } from "@/types/database";
+import type {
+  Booking,
+  BookingHold,
+  MatchmakingPost,
+  MatchmakingStatus,
+  Payment,
+} from "@/types/database";
 import type {
   RazorpayCheckoutOptions,
   RazorpayCheckoutResponse,
@@ -43,6 +52,23 @@ const dateTime = new Intl.DateTimeFormat("en-IN", {
   hour: "numeric",
   minute: "2-digit",
 });
+
+const matchmakingStatusCopy: Record<
+  MatchmakingStatus,
+  { label: string; variant: "accent" | "danger" | "neutral" | "success" | "warning" }
+> = {
+  open: { label: "Finding opponent", variant: "accent" },
+  matched: { label: "Opponent matched", variant: "success" },
+  cancelled: { label: "Search cancelled", variant: "neutral" },
+  expired: { label: "Search expired", variant: "warning" },
+};
+
+const skillOptions = [
+  { value: "open", label: "Open to all" },
+  { value: "friendly", label: "Friendly game" },
+  { value: "balanced", label: "Balanced level" },
+  { value: "competitive", label: "Competitive" },
+];
 
 type OrderResponse = {
   key_id: string;
@@ -102,6 +128,249 @@ function formatCountdown(totalSeconds: number) {
     2,
     "0",
   )}`;
+}
+
+function isFutureBooking(booking: Booking) {
+  return new Date(booking.snapshot_start_time).getTime() > Date.now();
+}
+
+function getMatchmakingErrorMessage(message: string) {
+  if (message.includes("team_name_required")) {
+    return "Add a team name between 2 and 80 characters.";
+  }
+  if (message.includes("matchmaking_post_exists")) {
+    return "This booking already has an active opponent search.";
+  }
+  if (message.includes("matchmaking_booking_must_be_future")) {
+    return "Opponent search is only available before the slot starts.";
+  }
+  if (message.includes("booking_enabled_player_required")) {
+    return "Verify your player profile before using opponent finder.";
+  }
+  if (message.includes("matchmaking_note_too_long")) {
+    return "Keep the note under 240 characters.";
+  }
+  if (
+    message.includes("create_matchmaking_post") ||
+    message.includes("matchmaking_posts") ||
+    message.toLowerCase().includes("could not find the function")
+  ) {
+    return "Opponent finder is not live in Supabase yet. Apply the Module 7 migration, then try again.";
+  }
+  return message;
+}
+
+function MatchmakingStatusBadge({ status }: { status: MatchmakingStatus }) {
+  const copy = matchmakingStatusCopy[status];
+  return (
+    <Badge variant={copy.variant}>
+      <HiUserGroup className="size-4" />
+      {copy.label}
+    </Badge>
+  );
+}
+
+function MatchmakingControls({
+  booking,
+  post,
+}: {
+  booking: Booking;
+  post: MatchmakingPost | null;
+}) {
+  const router = useRouter();
+  const [teamName, setTeamName] = useState("");
+  const [skillLevel, setSkillLevel] = useState("open");
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState<"create" | "cancel" | null>(null);
+  const [message, setMessage] = useState("");
+  const bookingIsFuture = isFutureBooking(booking);
+  const activePost = post?.status === "open" || post?.status === "matched";
+  const canCreate = booking.status === "confirmed" && bookingIsFuture && !activePost;
+
+  async function createPost(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy("create");
+    setMessage("");
+
+    const supabase = getBrowserSupabaseClient();
+    const { error } = await supabase.rpc("create_matchmaking_post", {
+      p_booking_id: booking.id,
+      p_team_name: teamName,
+      p_skill_level: skillLevel,
+      p_note: note || null,
+    });
+
+    setBusy(null);
+    if (error) {
+      setMessage(getMatchmakingErrorMessage(error.message));
+      return;
+    }
+
+    setTeamName("");
+    setSkillLevel("open");
+    setNote("");
+    router.refresh();
+  }
+
+  async function cancelPost() {
+    if (!post) return;
+    setBusy("cancel");
+    setMessage("");
+
+    const supabase = getBrowserSupabaseClient();
+    const { error } = await supabase.rpc("cancel_my_matchmaking_post", {
+      p_post_id: post.id,
+    });
+
+    setBusy(null);
+    if (error) {
+      setMessage(getMatchmakingErrorMessage(error.message));
+      return;
+    }
+
+    router.refresh();
+  }
+
+  return (
+    <div className="border-t border-border/70 bg-background/35 px-5 py-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="accent">
+              <HiSparkles className="size-4" />
+              Opponent finder
+            </Badge>
+            {post ? <MatchmakingStatusBadge status={post.status} /> : null}
+          </div>
+          <h4 className="mt-3 text-sm font-semibold">
+            {post?.status === "matched"
+              ? `${post.opponent_team_name} joined this match`
+              : activePost
+                ? `${post?.host_team_name} is looking for a team`
+                : "Need another team for this slot?"}
+          </h4>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">
+            Publish this confirmed booking when your team has the slot but still
+            needs opponents. Another team can join the same match without
+            creating a duplicate booking or payment.
+          </p>
+        </div>
+        {activePost ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={cancelPost}
+            disabled={busy !== null}
+          >
+            <HiXMark className="size-4" />
+            {busy === "cancel" ? "Updating…" : "Cancel listing"}
+          </Button>
+        ) : null}
+      </div>
+
+      {post ? (
+        <div className="mt-4 grid gap-3 rounded-2xl border border-border/70 bg-secondary/30 p-4 text-xs text-muted-foreground sm:grid-cols-2">
+          <div>
+            <p className="font-semibold text-foreground">{post.host_team_name}</p>
+            <p className="mt-1">
+              {skillOptions.find((option) => option.value === post.skill_level)
+                ?.label ?? "Open to all"}
+            </p>
+            {post.host_note ? (
+              <p className="mt-2 leading-5 text-muted-foreground">
+                “{post.host_note}”
+              </p>
+            ) : null}
+          </div>
+          <div className="sm:text-right">
+            {post.opponent_team_name ? (
+              <>
+                <p className="font-semibold text-emerald-300">
+                  {post.opponent_team_name}
+                </p>
+                {post.opponent_note ? (
+                  <p className="mt-2 leading-5 text-muted-foreground">
+                    “{post.opponent_note}”
+                  </p>
+                ) : null}
+              </>
+            ) : (
+              <p>Visible in Opponents until {dateTime.format(new Date(post.expires_at))}.</p>
+            )}
+          </div>
+        </div>
+      ) : null}
+
+      {canCreate ? (
+        <form className="mt-4 grid gap-3" onSubmit={createPost}>
+          <div className="grid gap-3 sm:grid-cols-[1fr_180px]">
+            <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Your team
+              <Input
+                value={teamName}
+                onChange={(event) => setTeamName(event.target.value)}
+                minLength={2}
+                maxLength={80}
+                placeholder="e.g. Sector 21 Strikers"
+                disabled={busy !== null}
+                required
+              />
+            </label>
+            <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Match vibe
+              <select
+                value={skillLevel}
+                onChange={(event) => setSkillLevel(event.target.value)}
+                disabled={busy !== null}
+                className="focus-ring h-12 rounded-xl border border-input bg-[#071020] px-4 text-sm font-medium normal-case tracking-normal text-foreground"
+              >
+                {skillOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            Note for opponents
+            <textarea
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+              maxLength={240}
+              placeholder="Optional: format, players needed, friendly/competitive context…"
+              disabled={busy !== null}
+              rows={3}
+              className="focus-ring w-full rounded-xl border border-input bg-[#071020] px-4 py-3 text-sm leading-6 text-foreground placeholder:text-muted-foreground"
+            />
+          </label>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="submit" variant="accent" disabled={busy !== null}>
+              <HiUserGroup className="size-4" />
+              {busy === "create" ? "Publishing…" : "Open opponent search"}
+            </Button>
+            <p className="text-xs leading-5 text-muted-foreground">
+              No new payment is created; this shares the already confirmed slot.
+            </p>
+          </div>
+        </form>
+      ) : !bookingIsFuture ? (
+        <p className="mt-4 text-xs text-muted-foreground">
+          Opponent finder is only available before the booked slot starts.
+        </p>
+      ) : null}
+
+      {message ? (
+        <p
+          role="status"
+          aria-live="polite"
+          className="mt-4 rounded-xl border border-amber-400/25 bg-amber-400/10 px-4 py-3 text-sm text-amber-100"
+        >
+          {message}
+        </p>
+      ) : null}
+    </div>
+  );
 }
 
 function ActiveHoldCard({
@@ -386,9 +655,11 @@ function ActiveHoldCard({
 function ConfirmedBookingCard({
   booking,
   payment,
+  matchmakingPost,
 }: {
   booking: Booking;
   payment: Payment | null;
+  matchmakingPost: MatchmakingPost | null;
 }) {
   return (
     <Card className="overflow-hidden border-emerald-400/25">
@@ -435,6 +706,7 @@ function ConfirmedBookingCard({
           </p>
         </div>
       </div>
+      <MatchmakingControls booking={booking} post={matchmakingPost} />
     </Card>
   );
 }
@@ -443,10 +715,12 @@ export function BookingHoldList({
   holds,
   payments,
   bookings,
+  matchmakingPosts,
 }: {
   holds: BookingHold[];
   payments: Payment[];
   bookings: Booking[];
+  matchmakingPosts: MatchmakingPost[];
 }) {
   const activeHold =
     holds.find((hold) => hold.status === "payment_pending") ?? null;
@@ -459,6 +733,32 @@ export function BookingHoldList({
     () => new Map(payments.map((payment) => [payment.id, payment])),
     [payments],
   );
+  const matchmakingPostByBooking = useMemo(() => {
+    const activeStatuses = new Set<MatchmakingStatus>(["open", "matched"]);
+    const result = new Map<string, MatchmakingPost>();
+
+    for (const post of matchmakingPosts) {
+      const existing = result.get(post.booking_id);
+      if (!existing) {
+        result.set(post.booking_id, post);
+        continue;
+      }
+
+      const postIsActive = activeStatuses.has(post.status);
+      const existingIsActive = activeStatuses.has(existing.status);
+      const postCreatedAt = new Date(post.created_at).getTime();
+      const existingCreatedAt = new Date(existing.created_at).getTime();
+
+      if (
+        (postIsActive && !existingIsActive) ||
+        (postIsActive === existingIsActive && postCreatedAt > existingCreatedAt)
+      ) {
+        result.set(post.booking_id, post);
+      }
+    }
+
+    return result;
+  }, [matchmakingPosts]);
   const reviewPayments = payments.filter(
     (payment) => payment.status === "captured_review",
   );
@@ -519,6 +819,7 @@ export function BookingHoldList({
               key={booking.id}
               booking={booking}
               payment={paymentById.get(booking.payment_id) ?? null}
+              matchmakingPost={matchmakingPostByBooking.get(booking.id) ?? null}
             />
           ))}
         </div>

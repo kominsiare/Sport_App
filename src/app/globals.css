@@ -1,26 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030712;
+  --background: #020611;
   --foreground: #f8fafc;
-  --card: #081020;
+  --card: #071225;
   --card-foreground: #f8fafc;
-  --popover: #0a1326;
+  --popover: #071225;
   --popover-foreground: #f8fafc;
-  --primary: #1752ff;
+  --primary: #2b63ff;
   --primary-foreground: #ffffff;
-  --secondary: #111b31;
+  --secondary: #101b31;
   --secondary-foreground: #f8fafc;
-  --muted: #101827;
-  --muted-foreground: #94a3b8;
-  --accent: #d8ff24;
+  --muted: #0c1628;
+  --muted-foreground: #9aa8c3;
+  --accent: #d8ff35;
   --accent-foreground: #071018;
-  --destructive: #ef4444;
+  --destructive: #ff4d5d;
   --destructive-foreground: #ffffff;
-  --border: #24324d;
-  --input: #1d2a43;
-  --ring: #5c7cff;
-  --radius: 0.875rem;
+  --border: #263956;
+  --input: #263956;
+  --ring: #d8ff35;
+  --arena-cyan: #35d8ff;
+  --arena-orange: #ff9f2f;
+  --radius: 1.05rem;
 }
 
 @theme inline {
@@ -66,11 +68,16 @@ html {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 50% 10%, rgba(23, 82, 255, 0.09), transparent 34rem),
+    radial-gradient(circle at 14% 12%, rgba(53, 216, 255, 0.14), transparent 26rem),
+    radial-gradient(circle at 88% 4%, rgba(216, 255, 53, 0.1), transparent 22rem),
+    radial-gradient(circle at 58% 115%, rgba(43, 99, 255, 0.18), transparent 34rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 100%),
     var(--background);
+  background-size: auto, auto, auto, 28px 28px, auto;
   color: var(--foreground);
   font-family: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 button,
@@ -101,10 +108,92 @@ a {
   background-size: 32px 32px;
 }
 
+.arena-surface {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(53, 216, 255, 0.16), transparent 26rem),
+    radial-gradient(circle at 88% 10%, rgba(216, 255, 53, 0.1), transparent 24rem),
+    radial-gradient(circle at 55% 100%, rgba(43, 99, 255, 0.18), transparent 36rem),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 100%);
+  background-size: auto, auto, auto, 30px 30px;
+}
+
+.arena-surface::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 14%, rgba(216, 255, 53, 0.06) 14% 14.22%, transparent 14.22% 86%, rgba(216, 255, 53, 0.06) 86% 86.22%, transparent 86.22%),
+    radial-gradient(ellipse at 50% 16%, transparent 0 11rem, rgba(53, 216, 255, 0.055) 11.1rem 11.28rem, transparent 11.35rem),
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: auto, auto, 56px 56px, 56px 56px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+
+.arena-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+.glass-panel {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(145deg, rgba(12, 22, 40, 0.92), rgba(5, 11, 24, 0.82)),
+    rgba(7, 18, 37, 0.86);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(22px);
+}
+
+.stadium-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.095);
+  background:
+    linear-gradient(145deg, rgba(10, 22, 43, 0.94), rgba(5, 11, 24, 0.9)),
+    radial-gradient(circle at 10% 0%, rgba(53, 216, 255, 0.12), transparent 18rem);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.stadium-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 28%),
+    radial-gradient(circle at 88% 10%, rgba(216, 255, 53, 0.12), transparent 10rem);
+  opacity: 0.72;
+}
+
+.stadium-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.arena-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(216, 255, 53, 0.48), transparent);
+}
+
+.arena-field {
+  background:
+    radial-gradient(ellipse at center, transparent 0 42%, rgba(216, 255, 53, 0.08) 42.5% 43.5%, transparent 44%),
+    linear-gradient(90deg, transparent 0 49.5%, rgba(53, 216, 255, 0.08) 49.5% 50.5%, transparent 50.5%),
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: auto, auto, 28px 28px, 28px 28px;
+}
+
 .blue-glow {
   box-shadow:
-    0 0 0 1px rgba(86, 124, 255, 0.45),
-    0 16px 42px rgba(23, 82, 255, 0.3),
+    0 0 0 1px rgba(91, 130, 255, 0.5),
+    0 18px 48px rgba(43, 99, 255, 0.34),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 

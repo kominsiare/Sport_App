@@ -51,7 +51,7 @@ export default async function PlayerVenueDetailPage({
       }
       className="max-w-7xl"
     >
-      <div className="relative overflow-hidden rounded-3xl border border-border">
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_28px_90px_rgba(0,0,0,0.28)]">
         <div className="relative aspect-[16/8] min-h-72">
           <Image
             src={venue.image_url}
@@ -83,7 +83,7 @@ export default async function PlayerVenueDetailPage({
         <div className="grid gap-5">
           {venue.courts.map((court) => (
             <Card key={court.id}>
-              <CardHeader className="border-b border-border">
+              <CardHeader className="border-b border-white/10">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <CardTitle>{court.name}</CardTitle>

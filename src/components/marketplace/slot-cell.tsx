@@ -9,10 +9,12 @@ type SlotCellProps = {
 };
 
 const stateStyles = {
-  available: "border-border bg-[#071020] text-foreground hover:border-primary",
+  available:
+    "border-white/10 bg-white/[0.045] text-foreground hover:border-accent/45 hover:bg-accent/10",
   selected: "blue-glow border-primary bg-primary text-white",
   held: "border-amber-400/40 bg-amber-400/10 text-amber-200",
-  booked: "cursor-not-allowed border-border bg-muted text-muted-foreground line-through",
+  booked:
+    "cursor-not-allowed border-white/10 bg-muted/70 text-muted-foreground line-through",
 };
 
 export function SlotCell({
@@ -28,7 +30,7 @@ export function SlotCell({
       disabled={state === "booked" || readOnly}
       onClick={onClick}
       className={cn(
-        "focus-ring min-h-11 rounded-xl border px-3 py-2 text-xs font-semibold transition",
+        "focus-ring min-h-11 rounded-2xl border px-3 py-2 text-xs font-semibold transition",
         stateStyles[state],
         readOnly && "cursor-default disabled:opacity-100",
       )}

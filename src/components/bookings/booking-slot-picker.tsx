@@ -98,7 +98,7 @@ export function BookingSlotPicker({
 
   if (hasActiveHold) {
     return (
-      <div className="mt-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4">
+      <div className="glass-panel mt-4 rounded-3xl border-amber-400/30 bg-amber-400/10 p-4">
         <div className="flex items-start gap-3">
           <HiLockClosed className="mt-0.5 size-5 shrink-0 text-amber-300" />
           <div>
@@ -170,7 +170,7 @@ export function BookingSlotPicker({
       >
         {selectedSlot ? (
           <div className="grid gap-4">
-            <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+            <div className="arena-field rounded-3xl border border-white/10 bg-secondary/50 p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="accent">{selectedSlot.sportName}</Badge>
                 <Badge variant="neutral">{selectedSlot.duration_minutes} min</Badge>
@@ -193,11 +193,11 @@ export function BookingSlotPicker({
               </div>
             </div>
 
-            <div className="rounded-xl border border-primary/30 bg-primary/10 p-4">
+            <div className="rounded-2xl border border-primary/30 bg-primary/10 p-4">
               <p className="text-sm font-semibold">₹500 advance comes next</p>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                Module 5 creates the real hold only. Razorpay checkout and booking
-                confirmation arrive in Module 6.
+                This creates the real ten-minute hold. The Bookings page opens
+                Razorpay, and the slot confirms only after the secure webhook.
               </p>
             </div>
 

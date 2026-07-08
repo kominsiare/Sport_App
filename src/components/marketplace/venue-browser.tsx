@@ -85,7 +85,7 @@ export function VenueBrowser({
 
   return (
     <div>
-      <div className="rounded-2xl border border-border bg-card p-4 md:p-5">
+      <div className="glass-panel rounded-[2rem] p-4 md:p-5">
         <div className="flex items-center gap-2 text-sm font-semibold">
           <HiAdjustmentsHorizontal className="size-5 text-accent" />
           Find your court
@@ -117,7 +117,7 @@ export function VenueBrowser({
                 className={`focus-ring min-h-10 shrink-0 rounded-full border px-4 text-xs font-semibold transition ${
                   sportSlug === "all"
                     ? "border-accent/45 bg-accent/10 text-accent"
-                    : "border-border bg-background text-muted-foreground hover:text-foreground"
+                    : "border-white/10 bg-white/[0.04] text-muted-foreground hover:text-foreground"
                 }`}
               >
                 All sports
@@ -141,7 +141,7 @@ export function VenueBrowser({
             <select
               value={area}
               onChange={(event) => setArea(event.target.value)}
-              className="focus-ring h-11 rounded-xl border border-input bg-[#071020] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
+              className="focus-ring h-11 rounded-2xl border border-white/10 bg-white/[0.045] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
             >
               <option value="All">All areas</option>
               {areas.map((item) => (
@@ -157,7 +157,7 @@ export function VenueBrowser({
             <select
               value={price}
               onChange={(event) => setPrice(event.target.value as PriceFilter)}
-              className="focus-ring h-11 rounded-xl border border-input bg-[#071020] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
+              className="focus-ring h-11 rounded-2xl border border-white/10 bg-white/[0.045] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
             >
               {priceOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -172,7 +172,7 @@ export function VenueBrowser({
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value as SortOption)}
-              className="focus-ring h-11 rounded-xl border border-input bg-[#071020] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
+              className="focus-ring h-11 rounded-2xl border border-white/10 bg-white/[0.045] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
             >
               <option value="recommended">Recommended</option>
               <option value="price">Lowest price</option>

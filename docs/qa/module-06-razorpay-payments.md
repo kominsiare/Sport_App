@@ -103,3 +103,27 @@ captured/failed webhook transitions, idempotency, amount validation, and cleanup
 complete. The real Razorpay Checkout, Checkout-return verification, captured webhook,
 booking confirmation, commission record, and responsive Player/Owner visual QA also
 pass.
+
+## 2026-07-08 UI refresh and opponent-finder follow-up
+
+- Re-imagined the app UI around the ImageGen sports-arena direction: darker glass
+  surfaces, court-line backgrounds, cyan/lime accents, stronger page headers, refreshed
+  cards, buttons, badges, inputs, landing, auth, player, owner, venue, booking, and
+  payment surfaces.
+- Added the team opponent-finder implementation without changing Razorpay payment
+  semantics: a confirmed future booking can publish one active open/matched listing,
+  and another verified Player team can join that same slot without initiating another
+  checkout or payment.
+- Added `supabase/migrations/20260708100000_module_7_team_matchmaking.sql` with
+  `matchmaking_posts`, `matchmaking_feed`, RLS, and RPCs for create/join/cancel/expire.
+- Remote Supabase application is pending because the saved pooler credential failed
+  authentication and no SQL execution tool/CLI token was available in this session.
+- Local checks passed: ESLint, TypeScript, and `next build`.
+- Dev server HTTP smoke passed: `/` returned 200, `/login?next=/app/player/opponents`
+  returned 200, and unauthenticated `/app/player/opponents` correctly redirected to
+  `/login?next=%2Fapp%2Fplayer%2Fopponents`.
+- Browser visual automation was unavailable in this run: the in-app/Chrome bridge tool
+  was not exposed and the `agent-browser` executable was not installed, so no new
+  desktop/mobile screenshot QA is claimed for this follow-up.
+- No Checkout, order creation, payment, refund, settlement, or Razorpay write action
+  was initiated.
