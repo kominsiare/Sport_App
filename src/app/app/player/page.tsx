@@ -11,6 +11,33 @@ import { Card } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+const playerActions = [
+  {
+    href: "/app/player/venues",
+    title: "Find venues",
+    description:
+      "Filter the live approved catalog by sport, city, area and starting price.",
+    cta: "Browse venues",
+    icon: HiMagnifyingGlass,
+  },
+  {
+    href: "/app/player/bookings",
+    title: "Track bookings",
+    description:
+      "Review holds, confirmed bookings, payment status, and opponent finder options.",
+    cta: "Open bookings",
+    icon: HiCalendarDays,
+  },
+  {
+    href: "/app/player/opponents",
+    title: "Find opponents",
+    description:
+      "Publish a confirmed slot for challengers or join another team’s open match.",
+    cta: "Open opponent finder",
+    icon: HiUserGroup,
+  },
+];
+
 export default function PlayerHomePage() {
   return (
     <PageShell
@@ -28,27 +55,29 @@ export default function PlayerHomePage() {
       }
     >
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="p-5">
-          <HiMagnifyingGlass className="size-6 text-accent" />
-          <h2 className="mt-4 font-semibold">Find venues</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Filter the live approved catalog by sport, city, area and starting price.
-          </p>
-        </Card>
-        <Card className="p-5">
-          <HiCalendarDays className="size-6 text-accent" />
-          <h2 className="mt-4 font-semibold">Track bookings</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Confirmed bookings appear only after Razorpay’s verified webhook.
-          </p>
-        </Card>
-        <Card className="p-5">
-          <HiUserGroup className="size-6 text-accent" />
-          <h2 className="mt-4 font-semibold">Find opponents</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Publish a confirmed slot for challengers or join another team’s open match.
-          </p>
-        </Card>
+        {playerActions.map((action) => {
+          const Icon = action.icon;
+
+          return (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="focus-ring group block rounded-3xl"
+            >
+              <Card className="flex h-full flex-col p-5 transition duration-200 group-hover:-translate-y-0.5 group-hover:border-accent/45 group-hover:bg-white/[0.07] group-hover:shadow-[0_24px_70px_rgba(53,216,255,0.13)]">
+                <Icon className="size-6 text-accent" />
+                <h2 className="mt-4 font-semibold">{action.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {action.description}
+                </p>
+                <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-accent">
+                  {action.cta}
+                  <HiArrowRight className="size-4 transition group-hover:translate-x-1" />
+                </span>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
     </PageShell>
   );
