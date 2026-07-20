@@ -90,7 +90,7 @@ export default async function OwnerRequestsPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-accent">
+                      <p className="font-semibold text-primary">
                         {money.format(booking.snapshot_advance_amount)} paid
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
@@ -169,7 +169,7 @@ export default async function OwnerRequestsPage() {
                       {hold.snapshot_duration_minutes} min
                     </p>
                   </div>
-                  <p className="text-sm font-semibold text-accent">
+                  <p className="text-sm font-semibold text-primary">
                     {money.format(hold.snapshot_total_amount)}
                   </p>
                 </div>
@@ -213,7 +213,7 @@ export default async function OwnerRequestsPage() {
 
       <Card className="mt-5 p-5">
         <div className="flex items-start gap-3">
-          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
             <HiShieldCheck className="size-5" />
           </span>
           <div>

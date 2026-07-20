@@ -12,8 +12,9 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 - Module 5 booking hold migrations: applied.
 - Module 6 Razorpay payment and service-role hardening migrations: applied.
 - Module 7 team matchmaking migration: applied and verified on 2026-07-08.
-- Site URL: `http://localhost:3000`.
-- Redirect URL: `http://localhost:3000/auth/callback`.
+- Site URL: `https://pllayz-app.vercel.app`.
+- Redirect URLs: `https://pllayz-app.vercel.app/auth/confirm` for email links and
+  `https://pllayz-app.vercel.app/auth/callback` for OAuth.
 - Web publishable key: stored only in ignored `.env.local`.
 - Email provider: enabled.
 - Phone provider: waiting for Twilio Verify credentials.
@@ -145,6 +146,16 @@ The hosted Supabase project is intentionally Vercel-only for tester sign-in. Loc
 development redirects should be added only when actively testing the local app, then
 removed again before sharing the hosted PWA. Supabase falls back to the configured Site
 URL when the requested callback is not allow-listed.
+
+Vercel Production and Preview must also set:
+
+```text
+NEXT_PUBLIC_APP_URL=https://pllayz-app.vercel.app
+```
+
+This public app origin was verified on 2026-07-20 after a stale
+`http://localhost:3000` value caused hosted email sign-in links to open the wrong
+domain.
 
 ## 4. Configure email sign-in
 

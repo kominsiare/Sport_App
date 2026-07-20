@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Login-gated multi-sport venue booking across Chandigarh, Mohali and Panchkula.",
     start_url: "/",
     display: "standalone",
-    background_color: "#030712",
-    theme_color: "#030712",
+    background_color: "#f7f9f8",
+    theme_color: "#f7f9f8",
     orientation: "portrait-primary",
     categories: ["sports", "lifestyle", "booking"],
     icons: [

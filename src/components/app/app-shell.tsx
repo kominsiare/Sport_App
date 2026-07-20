@@ -49,10 +49,12 @@ function NavLinks({
   items,
   pathname,
   onNavigate,
+  compact = false,
 }: {
   items: NavItem[];
   pathname: string;
   onNavigate?: () => void;
+  compact?: boolean;
 }) {
   return (
     <>
@@ -69,15 +71,20 @@ function NavLinks({
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "focus-ring group flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-medium text-muted-foreground transition hover:bg-white/[0.06] hover:text-foreground",
+              "focus-ring group flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground",
               active &&
-                "border border-primary/25 bg-primary/15 text-white shadow-[0_12px_32px_rgba(23,82,255,0.18)]",
+                "border border-primary/15 bg-primary/10 text-primary shadow-[0_10px_26px_rgba(0,168,107,0.12)]",
+              compact &&
+                "min-h-0 flex-1 flex-col gap-1 rounded-xl border-0 bg-transparent px-1 py-2 text-[10px]",
+              compact &&
+                active &&
+                "bg-primary/8 text-primary shadow-none",
             )}
           >
             <Icon
               className={cn(
-                "size-5 transition group-hover:text-accent",
-                active && "text-accent",
+                "size-5 transition group-hover:text-primary",
+                active && "text-primary",
               )}
             />
             {item.label}
@@ -90,9 +97,9 @@ function NavLinks({
 
 function AccountSummary({ profile }: { profile: Profile }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.045] p-4 shadow-[0_18px_48px_rgba(0,0,0,0.22)] backdrop-blur">
+    <div className="rounded-3xl border border-border bg-card p-4 shadow-[0_14px_34px_rgba(16,24,20,0.06)]">
       <div className="flex items-start gap-3">
-        <span className="grid size-9 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent ring-1 ring-accent/20">
+        <span className="grid size-9 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
           <HiShieldCheck className="size-5" />
         </span>
         <div className="min-w-0">
@@ -108,12 +115,12 @@ function AccountSummary({ profile }: { profile: Profile }) {
       {profile.account_type === "player" && !profile.can_book ? (
         <Link
           href="/onboarding?next=/app/player"
-          className="focus-ring mt-3 inline-flex rounded-lg text-xs font-semibold text-amber-200"
+          className="focus-ring mt-3 inline-flex rounded-lg text-xs font-semibold text-amber-700"
         >
           Verify phone before booking
         </Link>
       ) : (
-        <p className="mt-3 text-xs font-semibold text-accent">Account verified</p>
+        <p className="mt-3 text-xs font-semibold text-primary">Account verified</p>
       )}
 
       <form action="/auth/signout" method="post" className="mt-3">
@@ -143,7 +150,7 @@ export function AppShell({
 
   return (
     <div className="arena-surface min-h-dvh bg-background">
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-background/80 backdrop-blur-xl md:hidden">
+      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-xl md:hidden">
         <div className="flex h-16 items-center justify-between px-4">
           <Brand compact />
           <Button
@@ -158,8 +165,8 @@ export function AppShell({
       </header>
 
       {mobileOpen ? (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm md:hidden">
-          <aside className="glass-panel ml-auto flex h-full w-[min(86vw,340px)] flex-col rounded-l-[2rem] border-l border-white/10 p-4">
+        <div className="fixed inset-0 z-50 bg-black/25 backdrop-blur-sm md:hidden">
+          <aside className="glass-panel ml-auto flex h-full w-[min(86vw,340px)] flex-col rounded-l-[2rem] border-l border-border p-4">
             <div className="flex items-center justify-between">
               <Brand compact />
               <Button
@@ -194,7 +201,7 @@ export function AppShell({
       ) : null}
 
       <div className="mx-auto grid min-h-dvh max-w-[1480px] md:grid-cols-[260px_1fr]">
-        <aside className="sticky top-0 hidden h-dvh border-r border-white/10 bg-[#050b17]/78 p-5 backdrop-blur-xl md:flex md:flex-col">
+        <aside className="sticky top-0 hidden h-dvh border-r border-border bg-card/90 p-5 shadow-[18px_0_50px_rgba(16,24,20,0.04)] backdrop-blur-xl md:flex md:flex-col">
           <Brand />
           <div className="mt-10 flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
@@ -211,8 +218,12 @@ export function AppShell({
             <AccountSummary profile={profile} />
           </div>
         </aside>
-        <div className="min-w-0">{children}</div>
+        <div className="min-w-0 pb-20 md:pb-0">{children}</div>
       </div>
+
+      <nav className="fixed inset-x-3 bottom-3 z-40 flex items-center gap-1 rounded-[1.65rem] border border-border bg-card/95 p-1 shadow-[0_18px_55px_rgba(16,24,20,0.18)] backdrop-blur-xl md:hidden">
+        <NavLinks items={items} pathname={pathname} compact />
+      </nav>
     </div>
   );
 }

@@ -22,18 +22,18 @@ export function PageShell({
   return (
     <main
       className={cn(
-        "mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-10",
+        "mx-auto w-full max-w-6xl px-4 pb-28 pt-5 md:px-8 md:py-9",
         className,
       )}
     >
-      <header className="stadium-card arena-field flex flex-col gap-5 rounded-[2rem] p-5 md:flex-row md:items-end md:justify-between md:p-7">
+      <header className="motion-rise flex flex-col gap-5 rounded-[2rem] border border-border bg-card p-5 shadow-[0_18px_50px_rgba(16,24,20,0.06)] md:flex-row md:items-end md:justify-between md:p-7">
         <div className="max-w-2xl">
           {eyebrow ? (
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="font-display mt-2 text-3xl font-semibold uppercase leading-none tracking-[-0.035em] md:text-5xl">
+          <h1 className="mt-2 text-3xl font-bold leading-[1.05] tracking-[-0.04em] md:text-5xl">
             {title}
           </h1>
           {description ? (

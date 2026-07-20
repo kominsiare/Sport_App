@@ -41,8 +41,8 @@ export function VenueCard({
       : price;
 
   return (
-    <article className="stadium-card group rounded-3xl transition hover:-translate-y-0.5 hover:border-primary/55 hover:shadow-[0_24px_70px_rgba(43,99,255,0.22)]">
-      <div className="relative aspect-[16/10] overflow-hidden">
+    <article className="stadium-card group rounded-3xl transition hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_24px_60px_rgba(0,168,107,0.12)]">
+      <div className="relative aspect-[16/9] overflow-hidden">
         <Image
           src={image}
           alt={imageAlt}
@@ -51,7 +51,7 @@ export function VenueCard({
           className="object-cover transition duration-500 group-hover:scale-[1.025]"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 360px"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#040812] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
         <div className="absolute left-3 top-3 flex gap-2">
           <Badge variant="success">Verified</Badge>
           {mock ? <Badge variant="neutral">Mock data</Badge> : null}
@@ -62,11 +62,11 @@ export function VenueCard({
           <div>
             <h3 className="font-semibold">{name}</h3>
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-              <HiMapPin className="size-4 text-accent" />
+              <HiMapPin className="size-4 text-primary" />
               {area}
             </p>
           </div>
-          <p className="whitespace-nowrap text-sm font-semibold text-accent">
+          <p className="whitespace-nowrap text-sm font-semibold text-primary">
             {displayPrice}
           </p>
         </div>
@@ -84,7 +84,7 @@ export function VenueCard({
         </div>
         <Link
           href={href}
-          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-4 w-full")}
+          className={cn(buttonVariants({ variant: "default", size: "sm" }), "mt-4 w-full")}
         >
           View venue
           <HiArrowRight className="size-4" />

@@ -202,7 +202,7 @@ export function LoginForm({
   }
 
   return (
-    <main className="arena-surface night-grid min-h-dvh px-4 py-6 md:grid md:place-items-center md:py-12">
+    <main className="arena-surface min-h-dvh px-4 py-6 md:grid md:place-items-center md:py-12">
       <div className="mx-auto w-full max-w-md">
         <div className="flex items-center justify-between">
           <Brand compact />
@@ -215,16 +215,16 @@ export function LoginForm({
           </Link>
         </div>
 
-        <Card className="blue-glow mt-10 border-primary/35 p-5 md:p-7">
-          <span className="grid size-12 place-items-center rounded-2xl bg-primary/15 text-accent ring-1 ring-primary/25">
+        <Card className="motion-rise mt-10 p-5 md:p-7">
+          <span className="grid size-12 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
             <HiLockClosed className="size-6" />
           </span>
-          <h1 className="font-display mt-5 text-3xl font-semibold uppercase leading-none tracking-[-0.035em]">
-            Enter the Pllayz arena
+          <h1 className="mt-5 text-3xl font-bold leading-tight tracking-[-0.04em]">
+            Sign in to Pllayz
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Select the account you want to use. This choice is permanent so player and
-            venue permissions never get mixed.
+            Choose your role, then continue with phone, email, or Google. Player
+            and Venue Owner permissions stay separate.
           </p>
 
           <div className="mt-6 grid grid-cols-2 gap-2">
@@ -247,8 +247,8 @@ export function LoginForm({
                   className={cn(
                     "focus-ring flex min-h-14 items-center justify-center gap-2 rounded-xl border px-3 text-sm font-semibold transition",
                     accountType === item.value
-                      ? "border-accent/50 bg-accent/10 text-accent"
-                      : "border-border bg-background text-muted-foreground hover:text-foreground",
+                      ? "border-primary/50 bg-primary/10 text-primary"
+                      : "border-border bg-card text-muted-foreground hover:text-foreground",
                   )}
                 >
                   <Icon className="size-5" />
@@ -258,7 +258,7 @@ export function LoginForm({
             })}
           </div>
 
-          <div className="mt-5 grid grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.04] p-1">
+          <div className="mt-5 grid grid-cols-2 rounded-2xl border border-border bg-muted p-1">
             {(["phone", "email"] as Method[]).map((item) => (
               <button
                 key={item}
@@ -267,7 +267,7 @@ export function LoginForm({
                 onClick={() => resetVerification(item)}
                 className={cn(
                   "focus-ring flex min-h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold capitalize text-muted-foreground transition disabled:cursor-not-allowed disabled:opacity-45",
-                  method === item && "bg-secondary text-foreground",
+                  method === item && "bg-card text-foreground shadow-sm",
                 )}
               >
                 {item === "phone" ? (
@@ -283,7 +283,7 @@ export function LoginForm({
           {message ? (
             <div
               role="alert"
-              className="mt-4 flex gap-3 rounded-xl border border-amber-300/25 bg-amber-300/10 p-3 text-xs leading-5 text-amber-100"
+              className="mt-4 flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs leading-5 text-amber-800"
             >
               <HiExclamationTriangle className="mt-0.5 size-4 shrink-0" />
               <span>{message}</span>
@@ -356,7 +356,7 @@ export function LoginForm({
             </form>
           ) : (
             <div className="mt-5">
-              <span className="grid size-11 place-items-center rounded-xl bg-accent/10 text-accent">
+              <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">
                 <HiEnvelope className="size-5" />
               </span>
               <h2 className="mt-4 font-semibold">Check your email</h2>

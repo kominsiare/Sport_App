@@ -40,7 +40,7 @@ export function DialogDrawer({
         onOpenChange(false);
       }}
       onClose={() => onOpenChange(false)}
-      className="m-0 h-auto max-h-[88dvh] w-full max-w-none self-end rounded-t-3xl border border-border bg-card p-0 text-foreground backdrop:bg-black/75 md:m-auto md:w-[min(520px,calc(100%-32px))] md:self-auto md:rounded-2xl"
+      className="motion-rise m-0 h-auto max-h-[88dvh] w-full max-w-none self-end rounded-t-3xl border border-border bg-card p-0 text-foreground shadow-[0_-22px_70px_rgba(16,24,20,0.18)] backdrop:bg-black/35 md:m-auto md:w-[min(520px,calc(100%-32px))] md:self-auto md:rounded-2xl md:shadow-[0_28px_90px_rgba(16,24,20,0.18)]"
     >
       <div className={cn("p-5 md:p-6", className)}>
         <div className="flex items-start justify-between gap-4">

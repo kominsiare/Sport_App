@@ -25,7 +25,7 @@ export function CitySelector({
   return (
     <label className="relative block">
       <span className="sr-only">Choose city</span>
-      <HiMapPin className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-accent" />
+      <HiMapPin className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-primary" />
       <select
         value={city}
         onChange={(event) => {
@@ -33,7 +33,7 @@ export function CitySelector({
           setInternalCity(nextCity);
           onChange?.(nextCity);
         }}
-        className="focus-ring h-12 w-full appearance-none rounded-xl border border-input bg-[#071020] px-10 text-sm font-medium text-foreground transition hover:border-[#344666] focus:border-primary"
+        className="focus-ring h-12 w-full appearance-none rounded-2xl border border-input bg-card px-10 text-sm font-medium text-foreground shadow-[0_1px_2px_rgba(16,24,20,0.03)] transition hover:border-primary/35 focus:border-primary"
       >
         {includeAll ? <option value="All">All Tricity</option> : null}
         {cities.map((item) => (

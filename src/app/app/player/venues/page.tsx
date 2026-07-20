@@ -7,9 +7,9 @@ export default async function PlayerVenuesPage() {
 
   return (
     <PageShell
-      eyebrow="Player · Venue browsing"
-      title="Play across Tricity"
-      description="Browse fictional beta venues backed by the live approved-venue catalog. Filter by sport, city, area, and starting price."
+      eyebrow="Discover"
+      title="Find and book a slot"
+      description="Search approved Tricity venues, compare sports and prices, then reserve your court with a secure ₹500 advance."
     >
       <VenueBrowser venues={venues} sports={sports} />
     </PageShell>

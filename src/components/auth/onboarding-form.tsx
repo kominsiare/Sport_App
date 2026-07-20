@@ -196,7 +196,7 @@ export function OnboardingForm({
     <div className="grid gap-5 lg:grid-cols-[1.08fr_0.92fr]">
       <Card className="p-5 md:p-6">
         <div className="flex items-start gap-3">
-          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary/15 text-accent">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary">
             {owner ? (
               <HiBuildingOffice2 className="size-5" />
             ) : (
@@ -212,7 +212,7 @@ export function OnboardingForm({
             </p>
           </div>
           {detailStatus ? (
-            <HiCheckCircle className="ml-auto size-5 text-accent" aria-label="Complete" />
+            <HiCheckCircle className="ml-auto size-5 text-primary" aria-label="Complete" />
           ) : null}
         </div>
 
@@ -265,7 +265,7 @@ export function OnboardingForm({
                 onChange={(event) => setCity(event.target.value as TricityCity)}
                 disabled={busy}
                 required
-                className="focus-ring h-12 w-full appearance-none rounded-xl border border-input bg-[#071020] pl-11 pr-4 text-sm text-foreground transition hover:border-[#344666] focus:border-primary"
+                className="focus-ring h-12 w-full appearance-none rounded-xl border border-input bg-card pl-11 pr-4 text-sm text-foreground transition hover:border-primary/35 focus:border-primary"
               >
                 <option value="">Choose city</option>
                 {cities.map((item) => (
@@ -295,7 +295,7 @@ export function OnboardingForm({
           <div className="mt-5 grid gap-4">
             <div className="rounded-xl border border-border bg-background/60 p-4">
               <div className="flex items-center gap-3">
-                <HiPhone className="size-5 text-accent" />
+                <HiPhone className="size-5 text-primary" />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium">Mobile number</p>
                   <p className="truncate text-xs text-muted-foreground">
@@ -303,11 +303,11 @@ export function OnboardingForm({
                   </p>
                 </div>
                 {phoneVerified ? (
-                  <span className="text-xs font-semibold text-accent">Verified</span>
+                  <span className="text-xs font-semibold text-primary">Verified</span>
                 ) : null}
               </div>
               {!phoneVerified && !providers.phone ? (
-                <p className="mt-4 text-xs leading-5 text-amber-200">
+                <p className="mt-4 text-xs leading-5 text-amber-700">
                   Mobile verification is unavailable until Twilio Verify is
                   configured for this environment.
                 </p>
@@ -336,7 +336,7 @@ export function OnboardingForm({
 
             <div className="rounded-xl border border-border bg-background/60 p-4">
               <div className="flex items-center gap-3">
-                <HiEnvelope className="size-5 text-accent" />
+                <HiEnvelope className="size-5 text-primary" />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium">Email address</p>
                   <p className="truncate text-xs text-muted-foreground">
@@ -344,11 +344,11 @@ export function OnboardingForm({
                   </p>
                 </div>
                 {emailVerified ? (
-                  <span className="text-xs font-semibold text-accent">Verified</span>
+                  <span className="text-xs font-semibold text-primary">Verified</span>
                 ) : null}
               </div>
               {!emailVerified && !providers.email ? (
-                <p className="mt-4 text-xs leading-5 text-amber-200">
+                <p className="mt-4 text-xs leading-5 text-amber-700">
                   Email verification is unavailable in this environment.
                 </p>
               ) : !emailVerified && pendingContact?.kind !== "email" ? (
@@ -418,7 +418,7 @@ export function OnboardingForm({
         {message ? (
           <div
             role="alert"
-            className="flex gap-3 rounded-xl border border-amber-300/25 bg-amber-300/10 p-4 text-xs leading-5 text-amber-100"
+            className="flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-xs leading-5 text-amber-800"
           >
             <HiExclamationTriangle className="mt-0.5 size-4 shrink-0" />
             <span>{message}</span>
@@ -428,7 +428,7 @@ export function OnboardingForm({
         {success ? (
           <div
             role="status"
-            className="flex gap-3 rounded-xl border border-accent/25 bg-accent/10 p-4 text-xs leading-5 text-accent"
+            className="flex gap-3 rounded-xl border border-primary/25 bg-primary/10 p-4 text-xs leading-5 text-primary"
           >
             <HiCheckCircle className="mt-0.5 size-4 shrink-0" />
             <span>{success}</span>
@@ -453,7 +453,7 @@ export function OnboardingForm({
           {profile.profile_complete ? (
             <a
               href={nextPath}
-              className="focus-ring mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-accent-foreground transition hover:bg-[#e4ff68]"
+              className="focus-ring mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-[#00945f]"
             >
               Open {owner ? "owner workspace" : "player workspace"}
               <HiArrowRight className="size-4" />

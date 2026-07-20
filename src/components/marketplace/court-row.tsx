@@ -11,7 +11,7 @@ type CourtRowProps = {
 
 export function CourtRow({ name, type, duration, price }: CourtRowProps) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-white/10 py-4 last:border-0">
+    <div className="flex items-center justify-between gap-4 border-b border-border py-4 last:border-0">
       <div>
         <div className="flex items-center gap-2">
           <p className="text-sm font-semibold">{name}</p>
@@ -22,7 +22,7 @@ export function CourtRow({ name, type, duration, price }: CourtRowProps) {
           {duration}
         </p>
       </div>
-      <p className="text-sm font-semibold text-accent">{price}</p>
+      <p className="text-sm font-semibold text-primary">{price}</p>
     </div>
   );
 }

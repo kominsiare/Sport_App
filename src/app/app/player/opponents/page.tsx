@@ -9,9 +9,9 @@ export default async function PlayerOpponentsPage() {
 
   return (
     <PageShell
-      eyebrow="Player · Opponents"
-      title="Find teams to play against"
-      description="Join open opponent searches from teams who already booked a slot, or publish your own confirmed booking when your team needs challengers."
+      eyebrow="Opponents"
+      title="Find teams to play"
+      description="Join open matches from teams with confirmed slots, or publish your own booking when your team needs challengers."
     >
       <OpponentFinder posts={posts} currentUserId={profile.id} />
     </PageShell>

@@ -8,9 +8,9 @@ export default async function PlayerBookingsPage() {
 
   return (
     <PageShell
-      eyebrow="Player · Bookings"
-      title="Bookings and payments"
-      description="Pay the fixed ₹500 advance securely, then optionally publish a confirmed slot for teams looking for an opponent."
+      eyebrow="Bookings"
+      title="Track every booking"
+      description="See holds, payment progress, webhook-verified bookings, and opponent-search options in one clear timeline."
     >
       <BookingHoldList
         holds={holds}

@@ -130,3 +130,26 @@ pass.
   desktop/mobile screenshot QA is claimed for this follow-up.
 - No Checkout, order creation, payment, refund, settlement, or Razorpay write action
   was initiated.
+
+## 2026-07-20 Groww-style UI refresh and hosted auth follow-up
+
+- Reworked the app UI toward a cleaner Groww-like product experience: light surfaces,
+  green primary actions, compact cards, clearer role entry, simplified Player/Owner
+  dashboards, refreshed marketplace filters, booking states, owner management forms,
+  and mobile bottom navigation.
+- Added subtle interaction motion with reusable rise, pop, stagger, hover-lift, active
+  tap, and CTA pulse animations while keeping the layout responsive and readable.
+- Preserved Module 6 payment semantics: no Razorpay Checkout, order creation, payment,
+  refund, settlement, or payment-data mutation was initiated.
+- Fixed the hosted email sign-in redirect source by updating Vercel Production and
+  Preview `NEXT_PUBLIC_APP_URL` from the stale local origin to
+  `https://pllayz-app.vercel.app`.
+- Local verification passed on 2026-07-20: `eslint .`, `tsc --noEmit`,
+  `git diff --check`, and `next build`.
+- Production-server HTTP smoke passed locally: `/` and `/login` returned 200;
+  unauthenticated `/app/player`, `/app/player/bookings`, `/app/player/opponents`, and
+  `/app/owner` redirected to the expected login URLs; `/manifest.webmanifest` returned
+  the light PWA theme colors.
+- Browser visual automation was unavailable in this run: the browser/Chrome control
+  tool was not exposed by the current Codex tool surface, so no new desktop/mobile
+  screenshot QA is claimed for this redesign pass.

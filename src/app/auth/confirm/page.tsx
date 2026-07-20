@@ -70,7 +70,7 @@ export default function AuthConfirmPage() {
 
   return (
     <main className="night-grid grid min-h-dvh place-items-center px-4 py-10">
-      <Card className="blue-glow w-full max-w-md border-primary/35 bg-[#071020]/95 p-6 text-center">
+      <Card className="blue-glow w-full max-w-md border-primary/35 bg-card/95 p-6 text-center">
         <div className="mx-auto flex justify-center">
           <Brand compact />
         </div>

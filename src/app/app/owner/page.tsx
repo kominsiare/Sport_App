@@ -62,9 +62,9 @@ export default async function OwnerHomePage() {
 
   return (
     <PageShell
-      eyebrow="Venue owner"
-      title="Your venue operations, in one place"
-      description="Create private drafts, configure playable surfaces and weekly availability, then submit complete venues for admin review."
+      eyebrow="Owner dashboard"
+      title="Manage slots, bookings and earnings"
+      description="Keep availability, confirmed bookings, Razorpay advances, platform fees and owner dues easy to understand."
       actions={
         <Link
           href="/app/owner/venues"
@@ -75,13 +75,15 @@ export default async function OwnerHomePage() {
         </Link>
       }
     >
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
+      <div className="motion-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         {cards.map((metric) => {
           const Icon = metric.icon;
           return (
-            <Card key={metric.label} className="p-5">
-              <Icon className="size-6 text-accent" />
-              <p className="mt-7 text-3xl font-bold">{metric.value}</p>
+            <Card key={metric.label} className="p-5 hover:-translate-y-1 hover:border-primary/25 hover:shadow-[0_20px_50px_rgba(0,168,107,0.1)]">
+              <span className="grid size-10 place-items-center rounded-2xl bg-primary/10 text-primary">
+                <Icon className="size-5" />
+              </span>
+              <p className="mt-6 text-3xl font-bold tracking-[-0.04em]">{metric.value}</p>
               <p className="mt-1 text-xs text-muted-foreground">{metric.label}</p>
             </Card>
           );
@@ -94,7 +96,7 @@ export default async function OwnerHomePage() {
             <h2 className="font-semibold">Recent owner activity</h2>
             <Link
               href="/app/owner/requests"
-              className="text-xs font-semibold text-accent"
+              className="text-xs font-semibold text-primary"
             >
               View activity
             </Link>
@@ -131,13 +133,13 @@ export default async function OwnerHomePage() {
               ₹{metrics.advanceCollected.toLocaleString("en-IN")}
             </strong>
             . Pllayz commission retained:{" "}
-            <strong className="text-accent">
+            <strong className="text-primary">
               ₹{metrics.commissionCollected.toLocaleString("en-IN")}
             </strong>
             .
           </p>
           <div className="mt-4 flex items-center gap-2 rounded-xl border border-border bg-secondary/50 p-3 text-xs">
-            <HiReceiptPercent className="size-5 text-accent" />
+            <HiReceiptPercent className="size-5 text-primary" />
             <span className="text-muted-foreground">
               Manual owner due: ₹{metrics.ownerDue.toLocaleString("en-IN")}
             </span>

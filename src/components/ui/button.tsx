@@ -4,21 +4,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 export const buttonVariants = cva(
-  "focus-ring inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl px-5 text-sm font-semibold transition duration-200 disabled:pointer-events-none disabled:opacity-50",
+  "focus-ring inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl px-5 text-sm font-semibold transition duration-200 active:translate-y-px disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "blue-glow bg-[linear-gradient(135deg,#2b63ff,#35d8ff)] text-primary-foreground hover:brightness-110 active:translate-y-px",
+          "blue-glow bg-primary text-primary-foreground hover:bg-[#00945f]",
         accent:
-          "bg-[linear-gradient(135deg,#d8ff35,#78ffbd)] text-accent-foreground shadow-[0_16px_38px_rgba(216,255,53,0.18)] hover:brightness-110 active:translate-y-px",
+          "cta-pulse bg-primary text-primary-foreground shadow-[0_18px_42px_rgba(0,168,107,0.22)] hover:bg-[#00945f]",
         outline:
-          "border border-white/[0.12] bg-white/[0.035] text-foreground backdrop-blur hover:border-accent/55 hover:bg-accent/10 hover:text-accent",
-        ghost: "text-foreground hover:bg-white/[0.065]",
+          "border border-border bg-card text-foreground shadow-[0_8px_24px_rgba(16,24,20,0.04)] hover:border-primary/40 hover:bg-secondary hover:text-primary",
+        ghost: "text-foreground hover:bg-secondary hover:text-primary",
         subtle:
-          "border border-white/10 bg-white/[0.055] text-secondary-foreground hover:bg-white/[0.09]",
+          "border border-border bg-secondary text-secondary-foreground hover:bg-[#e5f4eb]",
         destructive:
-          "bg-[linear-gradient(135deg,#ff4d5d,#ff8a3d)] text-destructive-foreground hover:brightness-110",
+          "bg-destructive text-destructive-foreground shadow-[0_14px_34px_rgba(220,38,38,0.18)] hover:bg-red-700",
       },
       size: {
         default: "h-12",

@@ -62,7 +62,7 @@ export default async function ProfilePage() {
             const Icon = row.icon;
             return (
               <div key={row.label} className="flex items-center gap-4 p-4">
-                <span className="grid size-10 place-items-center rounded-xl bg-secondary text-accent">
+                <span className="grid size-10 place-items-center rounded-xl bg-secondary text-primary">
                   <Icon className="size-5" />
                 </span>
                 <div className="min-w-0 flex-1">

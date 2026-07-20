@@ -202,19 +202,19 @@ function MatchCard({
       <div className="grid gap-5 p-5 lg:grid-cols-[1fr_0.9fr]">
         <div className="grid gap-3 text-sm">
           <p className="flex items-center gap-2">
-            <HiMapPin className="size-4 text-accent" />
+            <HiMapPin className="size-4 text-primary" />
             {post.snapshot_venue_area}, {post.snapshot_venue_city}
           </p>
           <p className="flex items-center gap-2">
-            <HiCalendarDays className="size-4 text-accent" />
+            <HiCalendarDays className="size-4 text-primary" />
             {dateTime.format(new Date(post.snapshot_start_time))}
           </p>
           <p className="flex items-center gap-2">
-            <HiClock className="size-4 text-accent" />
+            <HiClock className="size-4 text-primary" />
             {post.snapshot_duration_minutes} minutes
           </p>
           <p className="flex items-center gap-2 font-semibold">
-            <HiCurrencyRupee className="size-4 text-accent" />
+            <HiCurrencyRupee className="size-4 text-primary" />
             {money.format(post.snapshot_total_amount)} slot already booked
           </p>
           {post.host_note ? (
@@ -253,7 +253,7 @@ function MatchCard({
                 placeholder="Optional: share team strength, kit color, format…"
                 disabled={busy !== null}
                 rows={3}
-                className="focus-ring w-full rounded-xl border border-input bg-[#071020] px-4 py-3 text-sm leading-6 text-foreground placeholder:text-muted-foreground"
+                className="focus-ring w-full rounded-xl border border-input bg-card px-4 py-3 text-sm leading-6 text-foreground placeholder:text-muted-foreground"
               />
             </label>
             <Button type="submit" variant="accent" disabled={busy !== null}>
@@ -286,7 +286,7 @@ function MatchCard({
         <p
           role="status"
           aria-live="polite"
-          className="mx-5 mb-5 rounded-xl border border-amber-400/25 bg-amber-400/10 px-4 py-3 text-sm text-amber-100"
+          className="mx-5 mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800"
         >
           {message}
         </p>
@@ -322,7 +322,7 @@ export function OpponentFinder({
       <Card className="overflow-hidden p-5">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-start gap-4">
-            <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
+            <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
               <HiSparkles className="size-6" />
             </span>
             <div>

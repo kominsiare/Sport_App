@@ -285,7 +285,7 @@ function MatchmakingControls({
           <div className="sm:text-right">
             {post.opponent_team_name ? (
               <>
-                <p className="font-semibold text-emerald-300">
+                <p className="font-semibold text-emerald-700">
                   {post.opponent_team_name}
                 </p>
                 {post.opponent_note ? (
@@ -322,7 +322,7 @@ function MatchmakingControls({
                 value={skillLevel}
                 onChange={(event) => setSkillLevel(event.target.value)}
                 disabled={busy !== null}
-                className="focus-ring h-12 rounded-xl border border-input bg-[#071020] px-4 text-sm font-medium normal-case tracking-normal text-foreground"
+                className="focus-ring h-12 rounded-xl border border-input bg-card px-4 text-sm font-medium normal-case tracking-normal text-foreground"
               >
                 {skillOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -341,7 +341,7 @@ function MatchmakingControls({
               placeholder="Optional: format, players needed, friendly/competitive context…"
               disabled={busy !== null}
               rows={3}
-              className="focus-ring w-full rounded-xl border border-input bg-[#071020] px-4 py-3 text-sm leading-6 text-foreground placeholder:text-muted-foreground"
+              className="focus-ring w-full rounded-xl border border-input bg-card px-4 py-3 text-sm leading-6 text-foreground placeholder:text-muted-foreground"
             />
           </label>
           <div className="flex flex-wrap items-center gap-3">
@@ -364,7 +364,7 @@ function MatchmakingControls({
         <p
           role="status"
           aria-live="polite"
-          className="mt-4 rounded-xl border border-amber-400/25 bg-amber-400/10 px-4 py-3 text-sm text-amber-100"
+          className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800"
         >
           {message}
         </p>
@@ -503,8 +503,8 @@ function ActiveHoldCard({
         },
         retry: { enabled: true },
         theme: {
-          color: "#1752ff",
-          backdrop_color: "#030712",
+          color: "#00a86b",
+          backdrop_color: "#101814",
         },
       };
 
@@ -552,8 +552,8 @@ function ActiveHoldCard({
         : null;
 
   return (
-    <Card className="overflow-hidden border-amber-400/30">
-      <div className="border-b border-amber-400/20 bg-amber-400/10 p-5">
+    <Card className="overflow-hidden border-amber-300">
+      <div className="border-b border-amber-200 bg-amber-50 p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
@@ -566,14 +566,14 @@ function ActiveHoldCard({
             </p>
           </div>
           <div className="text-right">
-            <p className="font-mono text-3xl font-bold text-amber-300">
+            <p className="font-mono text-3xl font-bold text-amber-700">
               {paymentLocked
                 ? "LOCKED"
                 : seconds === null
                   ? "--:--"
                   : formatCountdown(seconds)}
             </p>
-            <p className="mt-1 text-xs text-amber-100/60">
+            <p className="mt-1 text-xs text-amber-700">
               {paymentLocked ? "payment in progress" : "hold remaining"}
             </p>
           </div>
@@ -583,19 +583,19 @@ function ActiveHoldCard({
       <div className="grid gap-5 p-5 md:grid-cols-[1fr_auto] md:items-end">
         <div className="grid gap-3 text-sm">
           <p className="flex items-center gap-2">
-            <HiMapPin className="size-4 text-accent" />
+            <HiMapPin className="size-4 text-primary" />
             {hold.snapshot_venue_area}, {hold.snapshot_venue_city}
           </p>
           <p className="flex items-center gap-2">
-            <HiCalendarDays className="size-4 text-accent" />
+            <HiCalendarDays className="size-4 text-primary" />
             {dateTime.format(new Date(hold.snapshot_start_time))}
           </p>
           <p className="flex items-center gap-2">
-            <HiClock className="size-4 text-accent" />
+            <HiClock className="size-4 text-primary" />
             {hold.snapshot_duration_minutes} minutes
           </p>
           <p className="flex items-center gap-2 font-semibold">
-            <HiCurrencyRupee className="size-4 text-accent" />
+            <HiCurrencyRupee className="size-4 text-primary" />
             {money.format(hold.snapshot_total_amount)} total ·{" "}
             {money.format(hold.snapshot_advance_amount)} due now
           </p>
@@ -632,9 +632,9 @@ function ActiveHoldCard({
         <div
           role="status"
           aria-live="polite"
-          className="mx-5 mb-5 flex gap-3 rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-blue-100"
+          className="mx-5 mb-5 flex gap-3 rounded-xl border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-primary"
         >
-          <HiShieldCheck className="mt-0.5 size-5 shrink-0 text-accent" />
+          <HiShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
           <p>{statusMessage}</p>
         </div>
       ) : null}
@@ -680,7 +680,7 @@ function ConfirmedBookingCard({
               {booking.snapshot_court_name} · {booking.snapshot_sport_name}
             </p>
           </div>
-          <HiReceiptPercent className="size-8 text-accent" />
+          <HiReceiptPercent className="size-8 text-primary" />
         </div>
       </div>
       <div className="grid gap-4 p-5 text-sm sm:grid-cols-2">
@@ -692,7 +692,7 @@ function ConfirmedBookingCard({
           </p>
         </div>
         <div className="sm:text-right">
-          <p className="font-semibold text-accent">
+          <p className="font-semibold text-primary">
             {money.format(booking.snapshot_advance_amount)} paid
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -772,7 +772,7 @@ export function BookingHoldList({
         />
       ) : (
         <Card className="flex min-h-56 flex-col items-center justify-center p-8 text-center">
-          <HiClock className="size-9 text-accent" />
+          <HiClock className="size-9 text-primary" />
           <h2 className="mt-4 font-semibold">No active payment hold</h2>
           <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
             Choose an approved venue slot to reserve its physical court for ten
@@ -788,10 +788,10 @@ export function BookingHoldList({
       )}
 
       {reviewPayments.length > 0 ? (
-        <Card className="mt-5 border-red-400/30 bg-red-400/8 p-5">
+        <Card className="mt-5 border-red-500/20 bg-red-50 p-5">
           <PaymentStatusBadge status="captured_review" />
           <h2 className="mt-4 font-semibold">Payment needs manual review</h2>
-          <p className="mt-2 text-sm leading-6 text-red-100/75">
+          <p className="mt-2 text-sm leading-6 text-red-700">
             Razorpay captured ₹500, but Pllayz did not create a potentially
             conflicting booking. Do not pay again; the payment ID is safely
             recorded for admin reconciliation.
@@ -866,7 +866,7 @@ export function BookingHoldList({
                     </p>
                   </div>
                   <div className="sm:text-right">
-                    <p className="font-semibold text-accent">
+                    <p className="font-semibold text-primary">
                       {money.format(hold.snapshot_total_amount)}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
