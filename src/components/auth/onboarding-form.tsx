@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   HiArrowRight,
@@ -54,6 +55,7 @@ export function OnboardingForm({
   nextPath: string;
   providers: AuthProviderAvailability;
 }) {
+  const router = useRouter();
   const [profile, setProfile] = useState(initialProfile);
   const [fullName, setFullName] = useState(initialProfile.full_name ?? "");
   const [businessName, setBusinessName] = useState(
@@ -108,6 +110,12 @@ export function OnboardingForm({
     }
 
     setProfile(data);
+    if (data.profile_complete) {
+      setSuccess("Profile complete. Opening your workspace…");
+      router.replace(nextPath);
+      return;
+    }
+
     setSuccess("Profile details saved.");
   }
 
@@ -288,8 +296,8 @@ export function OnboardingForm({
           <h2 className="font-semibold">Verified contacts</h2>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">
             {owner
-              ? "Owners need both a verified mobile number and email."
-              : "One verified contact unlocks browsing. A verified phone unlocks booking."}
+              ? "A verified email or mobile number unlocks the owner workspace."
+              : "A verified email or mobile number unlocks browsing and booking."}
           </p>
 
           <div className="mt-5 grid gap-4">
@@ -307,10 +315,17 @@ export function OnboardingForm({
                 ) : null}
               </div>
               {!phoneVerified && !providers.phone ? (
-                <p className="mt-4 text-xs leading-5 text-amber-700">
-                  Mobile verification is unavailable until Twilio Verify is
-                  configured for this environment.
-                </p>
+                emailVerified ? (
+                  <p className="mt-4 text-xs leading-5 text-muted-foreground">
+                    Optional. Your verified email already meets the contact
+                    requirement.
+                  </p>
+                ) : (
+                  <p className="mt-4 text-xs leading-5 text-muted-foreground">
+                    Mobile verification is not configured. Verify your email to
+                    continue.
+                  </p>
+                )
               ) : !phoneVerified && pendingContact?.kind !== "phone" ? (
                 <div className="mt-4 grid gap-3">
                   <Input

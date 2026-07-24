@@ -27,7 +27,6 @@ export default async function OnboardingPage({
   if (!account.profile) redirect("/login?error=profile_failed");
 
   const params = await searchParams;
-  const providers = await getAuthProviderAvailability();
   const requestedNext = safeAppPath(params.next);
   const workspace = workspacePath(account.profile.account_type);
   const accountPrefix = `/app/${account.profile.account_type}`;
@@ -37,6 +36,12 @@ export default async function OnboardingPage({
       : requestedNext.startsWith(accountPrefix)
         ? requestedNext
         : workspace;
+
+  if (account.profile.profile_complete) {
+    redirect(nextPath);
+  }
+
+  const providers = await getAuthProviderAvailability();
 
   return (
     <main className="arena-surface min-h-dvh px-4 py-6 md:px-8 md:py-10">
