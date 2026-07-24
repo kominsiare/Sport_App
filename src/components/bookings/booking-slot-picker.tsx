@@ -55,7 +55,7 @@ function holdErrorMessage(message: string) {
     return "That slot was just taken or changed. Refresh the page and choose another time.";
   }
   if (message.includes("booking_enabled_player_required")) {
-    return "Complete Player verification before starting a booking hold.";
+    return "Verify your email or phone before starting a booking hold.";
   }
   return message;
 }

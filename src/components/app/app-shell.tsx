@@ -117,7 +117,7 @@ function AccountSummary({ profile }: { profile: Profile }) {
           href="/onboarding?next=/app/player"
           className="focus-ring mt-3 inline-flex rounded-lg text-xs font-semibold text-amber-700"
         >
-          Verify phone before booking
+          Verify email or phone before booking
         </Link>
       ) : (
         <p className="mt-3 text-xs font-semibold text-primary">Account verified</p>

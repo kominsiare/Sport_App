@@ -442,12 +442,10 @@ export function OnboardingForm({
           <p className="mt-2 text-xs leading-5 text-muted-foreground">
             {!profile.profile_complete
               ? owner
-                ? providers.phone
-                  ? "Save your details and verify both contacts to enter the owner workspace."
-                  : "Save your details, then configure Twilio Verify and verify your mobile number to enter the owner workspace."
+                ? "Save your details and verify your email or mobile number to enter the owner workspace."
                 : "Save your details and verify at least one contact to browse venues."
               : !profile.can_book && !owner
-                ? "Browsing is ready. Verify your mobile number before your first booking."
+                ? "Browsing is ready. Verify your email or mobile number before your first booking."
                 : "Your account meets the current access requirements."}
           </p>
           {profile.profile_complete ? (

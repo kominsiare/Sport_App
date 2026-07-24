@@ -88,8 +88,8 @@ export default async function ProfilePage() {
             {profile.account_type === "owner"
               ? "This account can manage its own venues. It cannot make player bookings."
               : profile.can_book
-                ? "This account can browse venues and meets the verified-phone requirement for future bookings."
-                : "This account can browse venues. Verify a mobile number before a future booking can be created."}
+                ? "This account can browse venues and book with a verified email or mobile number."
+                : "This account can browse venues. Verify your email or mobile number before creating a booking."}
           </p>
         </Card>
       </div>

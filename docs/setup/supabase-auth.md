@@ -12,6 +12,8 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 - Module 5 booking hold migrations: applied.
 - Module 6 Razorpay payment and service-role hardening migrations: applied.
 - Module 7 team matchmaking migration: applied and verified on 2026-07-08.
+- Email-or-phone booking eligibility and rolling demo-slot migrations: applied and
+  verified on 2026-07-24.
 - Site URL: `https://pllayz-app.vercel.app`.
 - Redirect URLs: `https://pllayz-app.vercel.app/auth/confirm` for email links and
   `https://pllayz-app.vercel.app/auth/callback` for OAuth.
@@ -79,6 +81,21 @@ verification confirmed `matchmaking_posts`, `matchmaking_feed`,
 The app keeps a defensive fallback so pages do not crash if a future environment is
 missing the Module 7 objects.
 
+The 2026-07-24 recovery migrations make verified email-link accounts first-class
+booking and matchmaking participants and add an authenticated rolling refresh for the
+fictional venue catalog:
+
+```text
+supabase/migrations/20260724165610_enable_email_matchmaking_and_refresh_demo_slots.sql
+supabase/migrations/20260724165706_refresh_system_owned_demo_catalog_slots.sql
+```
+
+The refresh is idempotent and limited to the reserved fictional seed venue UUID range.
+It does not alter real owner-created venues, payment records, or confirmed bookings.
+Live verification produced 854 available slots across the next 14 dates, enabled both
+complete Players, denied anonymous RPC execution, and preserved the existing captured
+Razorpay payment and confirmed booking.
+
 ## Razorpay Test Mode connection
 
 Create Test Mode API keys in Razorpay, then store them as Supabase Edge Function
@@ -122,7 +139,8 @@ Current Test Mode status:
   temporary fixtures and cleanup.
 - One interactive Test Checkout captured ₹500 INR and produced the expected confirmed
   booking and 5% commission record.
-- Temporary Player phone verification was reverted after Checkout.
+- Temporary Player phone verification was reverted after Checkout. A complete Player
+  with a verified email remains booking-enabled without phone verification.
 - Player and Owner payment screens passed desktop and exact 390px mobile visual QA
   without overflow, clipping, incorrect payment states, or final route runtime errors.
 - Module 6 is ready for review.
@@ -130,10 +148,10 @@ Current Test Mode status:
 The seed-owner credentials are stored only in macOS Keychain. Module 7 Admin operations
 must provide a controlled venue-claim/reassignment workflow before real venue onboarding.
 
-An Owner created through email remains onboarding-gated until both email and mobile are
-verified, as required by Module 2. While the phone provider is unavailable, onboarding
-now explains that Twilio Verify must be configured instead of presenting mobile
-verification as an available action.
+An Owner created through email can complete onboarding after the required name,
+business name, and city fields are saved and either email or phone is verified. Phone
+verification remains available for deployments that configure Twilio Verify, but it
+is no longer required in addition to a verified email.
 
 ## 3. Configure redirect URLs
 

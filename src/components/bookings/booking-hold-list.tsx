@@ -145,7 +145,7 @@ function getMatchmakingErrorMessage(message: string) {
     return "Opponent search is only available before the slot starts.";
   }
   if (message.includes("booking_enabled_player_required")) {
-    return "Verify your player profile before using opponent finder.";
+    return "Verify your email or phone before using opponent finder.";
   }
   if (message.includes("matchmaking_note_too_long")) {
     return "Keep the note under 240 characters.";

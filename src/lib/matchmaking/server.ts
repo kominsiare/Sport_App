@@ -7,41 +7,78 @@ function isMissingMatchmakingDatabase(message: string) {
     lower.includes("expire_matchmaking_posts") ||
     lower.includes("matchmaking_posts") ||
     lower.includes("matchmaking_feed") ||
+    lower.includes("refresh_demo_catalog_slots") ||
     lower.includes("could not find the function") ||
     lower.includes("does not exist")
   );
 }
 
-export async function getPlayerMatchmakingFeed(): Promise<MatchmakingFeedRow[]> {
+export type PlayerMatchmakingPageData = {
+  posts: MatchmakingFeedRow[];
+  availableSlotCount: number;
+  currentTime: string;
+};
+
+export async function getPlayerMatchmakingPageData(): Promise<PlayerMatchmakingPageData> {
   const supabase = await createServerSupabaseClient();
+  const { error: refreshError } = await supabase.rpc(
+    "refresh_demo_catalog_slots",
+    {},
+  );
+
+  if (
+    refreshError &&
+    !isMissingMatchmakingDatabase(refreshError.message) &&
+    !refreshError.message.includes("booking_enabled_player_required")
+  ) {
+    throw new Error(
+      `Unable to refresh demo slot availability: ${refreshError.message}`,
+    );
+  }
+
   const { error: expiryError } = await supabase.rpc(
     "expire_matchmaking_posts",
     {},
   );
 
-  if (expiryError) {
-    if (isMissingMatchmakingDatabase(expiryError.message)) {
-      return [];
-    }
-
+  if (expiryError && !isMissingMatchmakingDatabase(expiryError.message)) {
     throw new Error(
       `Unable to refresh opponent finder listings: ${expiryError.message}`,
     );
   }
 
-  const { data, error } = await supabase
-    .from("matchmaking_feed")
-    .select("*")
-    .order("snapshot_start_time", { ascending: true })
-    .order("created_at", { ascending: false });
+  const currentTime = new Date().toISOString();
+  const [
+    { data: posts, error: postsError },
+    { count: availableSlotCount, error: slotsError },
+  ] = await Promise.all([
+    supabase
+      .from("matchmaking_feed")
+      .select("*")
+      .order("snapshot_start_time", { ascending: true })
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("slots")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "available")
+      .gt("start_time", currentTime),
+  ]);
 
-  if (error) {
-    if (isMissingMatchmakingDatabase(error.message)) {
-      return [];
-    }
-
-    throw new Error(`Unable to load opponent finder listings: ${error.message}`);
+  if (postsError && !isMissingMatchmakingDatabase(postsError.message)) {
+    throw new Error(
+      `Unable to load opponent finder listings: ${postsError.message}`,
+    );
   }
 
-  return data ?? [];
+  if (slotsError) {
+    throw new Error(
+      `Unable to load bookable matchmaking slots: ${slotsError.message}`,
+    );
+  }
+
+  return {
+    posts: postsError ? [] : (posts ?? []),
+    availableSlotCount: availableSlotCount ?? 0,
+    currentTime,
+  };
 }

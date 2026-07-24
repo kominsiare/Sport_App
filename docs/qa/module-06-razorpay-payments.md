@@ -153,3 +153,39 @@ pass.
 - Browser visual automation was unavailable in this run: the browser/Chrome control
   tool was not exposed by the current Codex tool surface, so no new desktop/mobile
   screenshot QA is claimed for this redesign pass.
+
+## 2026-07-24 opponent-finder recovery
+
+- Live diagnosis confirmed why the feature appeared missing: there were no
+  matchmaking posts, no future confirmed bookings, and no future venue slots. The
+  original fictional-catalog availability ended on 2026-06-27. Both complete,
+  email-verified Players were also blocked because `can_book` required phone
+  verification.
+- Booking and onboarding eligibility now accept either a verified email address or a
+  verified phone number after the required profile fields are complete. Live
+  verification reports 2 of 2 Players booking-enabled and 3 complete Owners.
+- The Opponents page now presents the whole Book → Publish → Match journey in one
+  place. A Player can open venue booking when no eligible booking exists, publish a
+  confirmed future booking, browse or join open opponent searches, manage their own
+  queue, and share a listing link.
+- Matchmaking still preserves the one-booking payment model: the host pays for the
+  court booking; the joining team claims the opponent listing without creating a
+  second hold, Razorpay order, or payment.
+- Added live migrations
+  `20260724165610_enable_email_matchmaking_and_refresh_demo_slots.sql` and
+  `20260724165706_refresh_system_owned_demo_catalog_slots.sql`. The authenticated,
+  idempotent refresh RPC generates 14 rolling days only for the fictional catalog's
+  reserved seed venue IDs. System ownership needed by Module 6 commission references
+  is preserved, and real owner-created venues are not modified.
+- Live RPC verification created 854 available future demo slots across 14 dates; an
+  immediate second invocation inserted zero rows. Anonymous execution is denied and
+  authenticated execution is granted.
+- The existing interactive payment data remains unchanged: order
+  `order_T4cWh1BxpWqGKc` is captured for ₹500 INR and still references payment
+  `pay_T4d4BTQ3AC5fJf`; booking
+  `1492da94-c756-4416-bf9e-37e0cca5d8cc` remains confirmed with a ₹500 advance.
+- Local verification passed: `git diff --check`, ESLint, TypeScript, and the Next.js
+  production build. Supabase security and performance advisors reported no new issue
+  introduced by these migrations.
+- No Checkout, order creation, payment, refund, settlement, or Razorpay write action
+  was initiated during this recovery.

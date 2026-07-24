@@ -654,6 +654,10 @@ export type Database = {
         Args: Record<string, never>;
         Returns: number;
       };
+      refresh_demo_catalog_slots: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
       create_matchmaking_post: {
         Args: {
           p_booking_id: string;

@@ -28,8 +28,32 @@ export type VenueDetail = VenueCatalogRow & {
   courts: VenueCourtDetail[];
 };
 
+function isMissingDemoSlotRefresh(message: string) {
+  const lower = message.toLowerCase();
+  return (
+    lower.includes("refresh_demo_catalog_slots") ||
+    lower.includes("could not find the function") ||
+    lower.includes("does not exist")
+  );
+}
+
+async function refreshDemoCatalogSlots(
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+) {
+  const { error } = await supabase.rpc("refresh_demo_catalog_slots", {});
+
+  if (
+    error &&
+    !isMissingDemoSlotRefresh(error.message) &&
+    !error.message.includes("booking_enabled_player_required")
+  ) {
+    throw new Error(`Unable to refresh demo slots: ${error.message}`);
+  }
+}
+
 export async function getVenueCatalog() {
   const supabase = await createServerSupabaseClient();
+  await refreshDemoCatalogSlots(supabase);
 
   const [{ data: venues, error: venuesError }, { data: sports, error: sportsError }] =
     await Promise.all([
@@ -58,6 +82,7 @@ export async function getVenueCatalog() {
 
 export async function getVenueDetail(slug: string): Promise<VenueDetail | null> {
   const supabase = await createServerSupabaseClient();
+  await refreshDemoCatalogSlots(supabase);
   const { error: expiryError } = await supabase.rpc("expire_booking_holds", {});
 
   if (expiryError) {
