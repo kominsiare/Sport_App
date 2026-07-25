@@ -45,6 +45,13 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Flutter app
+
+The Android/iOS client lives in [`mobile/`](mobile/README.md) and shares the
+hosted Supabase, booking, Razorpay, Owner operations, and opponent-finder
+backend with this Next.js app. Android beta installation and QA details are in
+[`docs/qa/flutter-mobile.md`](docs/qa/flutter-mobile.md).
+
 To connect Supabase, follow [docs/setup/supabase-auth.md](docs/setup/supabase-auth.md).
 
 ## Quality checks

@@ -160,6 +160,19 @@ In **Authentication → URL Configuration**:
 - Production Site URL: `https://pllayz-app.vercel.app`
 - Hosted redirect allow-list: `https://pllayz-app.vercel.app/**`
 
+The Flutter app uses
+`https://pllayz-app.vercel.app/mobile-auth` for email and Google returns. This
+keeps the initial Supabase redirect inside the existing hosted allow-list.
+Android verifies that URL through
+`public/.well-known/assetlinks.json` and opens package `io.pllayz.app`
+directly. When a browser handles the URL, `/mobile-auth` forwards its complete
+query string and fragment to `io.pllayz.app://login-callback/`, which is
+registered in both Android and iOS.
+
+Mobile magic links must be requested and opened on the same device because the
+Flutter client uses PKCE. Each link is single-use; opening an older or already
+consumed email correctly returns an invalid/expired-link response.
+
 The hosted Supabase project is intentionally Vercel-only for tester sign-in. Local
 development redirects should be added only when actively testing the local app, then
 removed again before sharing the hosted PWA. Supabase falls back to the configured Site
