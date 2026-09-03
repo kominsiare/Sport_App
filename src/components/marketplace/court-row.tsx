@@ -22,7 +22,7 @@ export function CourtRow({ name, type, duration, price }: CourtRowProps) {
           {duration}
         </p>
       </div>
-      <p className="text-sm font-semibold text-accent">{price}</p>
+      <p className="text-sm font-semibold text-primary">{price}</p>
     </div>
   );
 }

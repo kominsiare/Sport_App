@@ -14,7 +14,7 @@ export function EmptyState({
 }) {
   return (
     <Card className="flex min-h-64 flex-col items-center justify-center px-6 py-10 text-center">
-      <span className="grid size-12 place-items-center rounded-full border border-border bg-secondary text-accent">
+      <span className="grid size-12 place-items-center rounded-full border border-border bg-secondary text-primary">
         <HiInboxStack className="size-6" />
       </span>
       <h2 className="mt-4 font-semibold">{title}</h2>

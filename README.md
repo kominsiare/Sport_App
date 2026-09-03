@@ -4,7 +4,7 @@ Pllayz is a Tricity-first, login-gated, multi-sport venue-booking PWA for player
 
 ## Current milestone
 
-Module 5 adds database-enforced ten-minute booking holds:
+Module 6 adds Razorpay Test Mode advance payments and webhook-confirmed bookings:
 
 - Next.js App Router with TypeScript
 - installable PWA manifest and service worker
@@ -24,10 +24,17 @@ Module 5 adds database-enforced ten-minute booking holds:
 - live hold countdown, cancellation, expiry, and history
 - Owner read-only visibility into payment-hold demand
 - append-only booking audit events
+- server-created Razorpay orders for the fixed ₹500 advance
+- server-side Checkout-return signature verification
+- raw-body Razorpay webhook signature verification and event idempotency
+- booking confirmation only after a captured-payment webhook
+- immutable Player booking receipts and payment history
+- Owner confirmed-booking and payment visibility
+- 5% commission ledger with advance-first collection and manual owner-due tracking
 - PWA caching that excludes authenticated pages
 
-Razorpay checkout, verified booking confirmation, commission ledgers, refunds, and
-admin operations remain in later modules.
+Razorpay Live Mode, automated refunds, payouts, and admin operations remain in later
+modules.
 
 ## Local development
 
@@ -37,6 +44,13 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## Flutter app
+
+The Android/iOS client lives in [`mobile/`](mobile/README.md) and shares the
+hosted Supabase, booking, Razorpay, Owner operations, and opponent-finder
+backend with this Next.js app. Android beta installation and QA details are in
+[`docs/qa/flutter-mobile.md`](docs/qa/flutter-mobile.md).
 
 To connect Supabase, follow [docs/setup/supabase-auth.md](docs/setup/supabase-auth.md).
 

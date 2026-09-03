@@ -51,7 +51,7 @@ export default async function PlayerVenueDetailPage({
       }
       className="max-w-7xl"
     >
-      <div className="relative overflow-hidden rounded-3xl border border-border">
+      <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card p-2 shadow-[0_24px_70px_rgba(16,24,20,0.12)]">
         <div className="relative aspect-[16/8] min-h-72">
           <Image
             src={venue.image_url}
@@ -61,7 +61,7 @@ export default async function PlayerVenueDetailPage({
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 1200px"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/68 via-black/15 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5 md:p-8">
             <div className="flex flex-wrap gap-2">
               <Badge variant="success">
@@ -71,7 +71,7 @@ export default async function PlayerVenueDetailPage({
               {venue.is_featured ? <Badge variant="accent">Recommended</Badge> : null}
             </div>
             <p className="mt-4 flex items-center gap-2 text-sm font-medium text-white">
-              <HiMapPin className="size-5 text-accent" />
+              <HiMapPin className="size-5 text-[#d8ff35]" />
               {venue.area}, {venue.city}
             </p>
             <p className="mt-1 text-xs text-white/70">{venue.address}</p>
@@ -91,7 +91,7 @@ export default async function PlayerVenueDetailPage({
                       {court.court_type}
                     </p>
                   </div>
-                  <p className="text-sm font-semibold text-accent">
+                  <p className="text-sm font-semibold text-primary">
                     From {money.format(court.base_price)}
                   </p>
                 </div>
@@ -105,7 +105,7 @@ export default async function PlayerVenueDetailPage({
               </CardHeader>
               <CardContent className="pt-5">
                 <div className="flex items-center gap-2">
-                  <HiClock className="size-5 text-accent" />
+                  <HiClock className="size-5 text-primary" />
                   <h3 className="text-sm font-semibold">
                     Choose a future court slot
                   </h3>
@@ -126,7 +126,7 @@ export default async function PlayerVenueDetailPage({
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Starting price
             </p>
-            <p className="mt-2 text-3xl font-bold text-accent">
+            <p className="mt-2 text-3xl font-bold text-primary">
               {money.format(venue.from_price)}
             </p>
             <p className="mt-2 text-xs leading-5 text-muted-foreground">
@@ -151,7 +151,7 @@ export default async function PlayerVenueDetailPage({
             <div className="mt-3 grid gap-2">
               {venue.amenities.map((amenity) => (
                 <p key={amenity} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <HiCheckBadge className="size-4 text-accent" />
+                  <HiCheckBadge className="size-4 text-primary" />
                   {amenity}
                 </p>
               ))}

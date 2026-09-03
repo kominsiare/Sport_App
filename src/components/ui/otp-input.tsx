@@ -55,7 +55,7 @@ export function OtpInput({
           disabled={disabled}
           onChange={(event) => updateDigit(index, event.target.value)}
           onKeyDown={(event) => handleKeyDown(index, event.key)}
-          className="focus-ring aspect-square min-w-0 rounded-xl border border-input bg-[#071020] text-center text-lg font-semibold text-foreground transition focus:border-primary"
+          className="focus-ring aspect-square min-w-0 rounded-xl border border-input bg-card text-center text-lg font-semibold text-foreground transition focus:border-primary"
         />
       ))}
     </div>

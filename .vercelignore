@@ -1,0 +1,4 @@
+mobile/.dart_tool
+mobile/build
+mobile/android/.gradle
+mobile/ios/Pods

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { HiAdjustmentsHorizontal, HiArrowPath } from "react-icons/hi2";
+import { HiAdjustmentsHorizontal, HiArrowPath, HiMagnifyingGlass } from "react-icons/hi2";
 
 import { CitySelector } from "@/components/marketplace/city-selector";
 import { SportChip } from "@/components/marketplace/sport-chip";
@@ -85,10 +85,13 @@ export function VenueBrowser({
 
   return (
     <div>
-      <div className="rounded-2xl border border-border bg-card p-4 md:p-5">
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <HiAdjustmentsHorizontal className="size-5 text-accent" />
-          Find your court
+      <div className="rounded-[2rem] border border-border bg-card p-4 shadow-[0_18px_50px_rgba(16,24,20,0.06)] md:p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <HiMagnifyingGlass className="size-5 text-primary" />
+            Search venues, sports or areas
+          </div>
+          <HiAdjustmentsHorizontal className="size-5 text-muted-foreground" />
         </div>
 
         <div className="mt-4 grid gap-4 lg:grid-cols-[220px_1fr] lg:items-end">
@@ -116,8 +119,8 @@ export function VenueBrowser({
                 onClick={() => setSportSlug("all")}
                 className={`focus-ring min-h-10 shrink-0 rounded-full border px-4 text-xs font-semibold transition ${
                   sportSlug === "all"
-                    ? "border-accent/45 bg-accent/10 text-accent"
-                    : "border-border bg-background text-muted-foreground hover:text-foreground"
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
                 All sports
@@ -141,7 +144,7 @@ export function VenueBrowser({
             <select
               value={area}
               onChange={(event) => setArea(event.target.value)}
-              className="focus-ring h-11 rounded-xl border border-input bg-[#071020] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
+              className="focus-ring h-11 rounded-2xl border border-input bg-card px-3 text-sm font-medium normal-case tracking-normal text-foreground"
             >
               <option value="All">All areas</option>
               {areas.map((item) => (
@@ -157,7 +160,7 @@ export function VenueBrowser({
             <select
               value={price}
               onChange={(event) => setPrice(event.target.value as PriceFilter)}
-              className="focus-ring h-11 rounded-xl border border-input bg-[#071020] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
+              className="focus-ring h-11 rounded-2xl border border-input bg-card px-3 text-sm font-medium normal-case tracking-normal text-foreground"
             >
               {priceOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -172,7 +175,7 @@ export function VenueBrowser({
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value as SortOption)}
-              className="focus-ring h-11 rounded-xl border border-input bg-[#071020] px-3 text-sm font-medium normal-case tracking-normal text-foreground"
+              className="focus-ring h-11 rounded-2xl border border-input bg-card px-3 text-sm font-medium normal-case tracking-normal text-foreground"
             >
               <option value="recommended">Recommended</option>
               <option value="price">Lowest price</option>
@@ -194,7 +197,7 @@ export function VenueBrowser({
       </div>
 
       {filteredVenues.length > 0 ? (
-        <div className="mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="motion-stagger mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredVenues.map((venue, index) => (
             <VenueCard
               key={venue.id}

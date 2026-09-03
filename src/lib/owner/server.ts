@@ -1,9 +1,12 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type {
+  Booking,
   BookingHold,
+  CommissionRecord,
   Court,
   CourtSport,
   OwnerOperationLog,
+  Payment,
   Sport,
   Venue,
   VenueApproval,
@@ -62,6 +65,9 @@ export async function getOwnerDashboardData() {
     { data: slots, error: slotsError },
     { data: logs, error: logsError },
     { data: bookingHolds, error: bookingHoldsError },
+    { data: payments, error: paymentsError },
+    { data: bookings, error: bookingsError },
+    { data: commissions, error: commissionsError },
   ] = await Promise.all([
     supabase.from("venues").select("*").order("created_at", { ascending: false }),
     supabase.from("venue_approvals").select("*"),
@@ -83,6 +89,21 @@ export async function getOwnerDashboardData() {
       .select("*")
       .order("created_at", { ascending: false })
       .limit(30),
+    supabase
+      .from("payments")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30),
+    supabase
+      .from("bookings")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30),
+    supabase
+      .from("commission_records")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30),
   ]);
 
   const errors = [
@@ -94,6 +115,9 @@ export async function getOwnerDashboardData() {
     slotsError,
     logsError,
     bookingHoldsError,
+    paymentsError,
+    bookingsError,
+    commissionsError,
   ].filter(Boolean);
 
   if (errors.length > 0) {
@@ -160,6 +184,9 @@ export async function getOwnerDashboardData() {
     venues: summaries,
     logs: logs ?? [],
     bookingHolds: (bookingHolds ?? []) as BookingHold[],
+    payments: (payments ?? []) as Payment[],
+    bookings: (bookings ?? []) as Booking[],
+    commissions: (commissions ?? []) as CommissionRecord[],
     metrics: {
       totalVenues: summaries.length,
       pendingReview: summaries.filter(
@@ -178,6 +205,21 @@ export async function getOwnerDashboardData() {
       activeBookingHolds: (bookingHolds ?? []).filter(
         (hold) => hold.status === "payment_pending",
       ).length,
+      confirmedBookings: (bookings ?? []).filter(
+        (booking) => booking.status === "confirmed",
+      ).length,
+      advanceCollected: (commissions ?? []).reduce(
+        (total, commission) => total + commission.advance_amount,
+        0,
+      ),
+      commissionCollected: (commissions ?? []).reduce(
+        (total, commission) => total + commission.collected_from_advance,
+        0,
+      ),
+      ownerDue: (commissions ?? []).reduce(
+        (total, commission) => total + commission.owner_due_amount,
+        0,
+      ),
     },
   };
 }

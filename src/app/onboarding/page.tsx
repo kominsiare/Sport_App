@@ -6,6 +6,7 @@ import { Brand } from "@/components/brand/brand";
 import { OnboardingForm } from "@/components/auth/onboarding-form";
 import { safeAppPath, workspacePath } from "@/lib/auth/navigation";
 import { getCurrentAccount } from "@/lib/auth/server";
+import { getAuthProviderAvailability } from "@/lib/supabase/auth-settings";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {
@@ -36,8 +37,14 @@ export default async function OnboardingPage({
         ? requestedNext
         : workspace;
 
+  if (account.profile.profile_complete) {
+    redirect(nextPath);
+  }
+
+  const providers = await getAuthProviderAvailability();
+
   return (
-    <main className="night-grid min-h-dvh px-4 py-6 md:px-8 md:py-10">
+    <main className="arena-surface min-h-dvh px-4 py-6 md:px-8 md:py-10">
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between gap-4">
           <Brand />
@@ -52,7 +59,7 @@ export default async function OnboardingPage({
         </div>
 
         <div className="mt-10 max-w-2xl">
-          <p className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-accent">
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-primary">
             Secure account setup
           </p>
           <h1 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
@@ -65,12 +72,16 @@ export default async function OnboardingPage({
         </div>
 
         <div className="mt-8">
-          <OnboardingForm initialProfile={account.profile} nextPath={nextPath} />
+          <OnboardingForm
+            initialProfile={account.profile}
+            nextPath={nextPath}
+            providers={providers}
+          />
         </div>
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
           Need to start again?{" "}
-          <Link href="/login" className="font-semibold text-accent">
+          <Link href="/login" className="font-semibold text-primary">
             Return to login
           </Link>
         </p>

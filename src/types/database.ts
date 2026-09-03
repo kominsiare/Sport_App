@@ -8,6 +8,33 @@ export type BookingHoldStatus =
   | "cancelled"
   | "expired"
   | "converted";
+export type PaymentStatus =
+  | "order_creating"
+  | "order_created"
+  | "payment_processing"
+  | "captured"
+  | "captured_review"
+  | "failed"
+  | "expired"
+  | "refunded";
+export type BookingStatus =
+  | "confirmed"
+  | "cancelled"
+  | "completed"
+  | "disputed"
+  | "refunded";
+export type MatchmakingStatus = "open" | "matched" | "cancelled" | "expired";
+export type CommissionCollectionStatus =
+  | "collected_from_advance"
+  | "partially_collected_owner_due"
+  | "settled"
+  | "waived";
+export type WebhookProcessingStatus =
+  | "received"
+  | "processed"
+  | "ignored"
+  | "requires_review"
+  | "failed";
 
 export type Profile = {
   id: string;
@@ -152,6 +179,7 @@ export type BookingHold = {
   expires_at: string;
   cancelled_at: string | null;
   converted_at: string | null;
+  payment_processing_at: string | null;
   snapshot_venue_name: string;
   snapshot_venue_city: TricityCity;
   snapshot_venue_area: string;
@@ -170,6 +198,8 @@ export type BookingHold = {
 export type BookingAuditLog = {
   id: number;
   booking_hold_id: string | null;
+  payment_id: string | null;
+  booking_id: string | null;
   player_user_id: string | null;
   owner_user_id: string | null;
   venue_id: string | null;
@@ -179,6 +209,122 @@ export type BookingAuditLog = {
   new_status: BookingHoldStatus | null;
   details: Record<string, unknown>;
   created_at: string;
+};
+
+export type Payment = {
+  id: string;
+  booking_hold_id: string;
+  player_user_id: string;
+  owner_user_id: string;
+  status: PaymentStatus;
+  amount_subunits: number;
+  currency: string;
+  razorpay_order_receipt: string;
+  razorpay_order_id: string | null;
+  razorpay_payment_id: string | null;
+  gateway_order_status: string | null;
+  gateway_payment_status: string | null;
+  order_claim_token: string | null;
+  order_claimed_at: string | null;
+  order_created_at: string | null;
+  checkout_return_verified_at: string | null;
+  captured_at: string | null;
+  failed_at: string | null;
+  failure_code: string | null;
+  failure_description: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Booking = {
+  id: string;
+  booking_hold_id: string;
+  payment_id: string;
+  player_user_id: string;
+  owner_user_id: string;
+  venue_id: string | null;
+  court_id: string | null;
+  sport_id: string | null;
+  slot_id: string | null;
+  status: BookingStatus;
+  snapshot_venue_name: string;
+  snapshot_venue_city: TricityCity;
+  snapshot_venue_area: string;
+  snapshot_court_name: string;
+  snapshot_court_type: string;
+  snapshot_sport_name: string;
+  snapshot_start_time: string;
+  snapshot_end_time: string;
+  snapshot_duration_minutes: number;
+  snapshot_total_amount: number;
+  snapshot_advance_amount: number;
+  confirmed_at: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MatchmakingPost = {
+  id: string;
+  booking_id: string;
+  host_user_id: string;
+  opponent_user_id: string | null;
+  owner_user_id: string;
+  venue_id: string | null;
+  court_id: string | null;
+  sport_id: string | null;
+  slot_id: string | null;
+  status: MatchmakingStatus;
+  host_team_name: string;
+  opponent_team_name: string | null;
+  skill_level: string | null;
+  host_note: string | null;
+  opponent_note: string | null;
+  expires_at: string;
+  matched_at: string | null;
+  cancelled_at: string | null;
+  snapshot_venue_name: string;
+  snapshot_venue_city: TricityCity;
+  snapshot_venue_area: string;
+  snapshot_court_name: string;
+  snapshot_court_type: string;
+  snapshot_sport_name: string;
+  snapshot_start_time: string;
+  snapshot_end_time: string;
+  snapshot_duration_minutes: number;
+  snapshot_total_amount: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CommissionRecord = {
+  id: string;
+  booking_id: string;
+  payment_id: string;
+  owner_user_id: string;
+  total_booking_amount: number;
+  advance_amount: number;
+  commission_rate: number;
+  commission_amount: number;
+  collected_from_advance: number;
+  owner_advance_credit: number;
+  owner_due_amount: number;
+  collection_status: CommissionCollectionStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RazorpayWebhookEvent = {
+  event_id: string;
+  event_type: string;
+  payload_sha256: string;
+  payload: Record<string, unknown>;
+  razorpay_order_id: string | null;
+  razorpay_payment_id: string | null;
+  processing_status: WebhookProcessingStatus;
+  result: Record<string, unknown>;
+  error_message: string | null;
+  received_at: string;
+  processed_at: string | null;
 };
 
 export type VenueCatalogRow = {
@@ -200,6 +346,8 @@ export type VenueCatalogRow = {
   sports: string[];
   sport_slugs: string[];
 };
+
+export type MatchmakingFeedRow = MatchmakingPost;
 
 export type Database = {
   public: {
@@ -424,10 +572,44 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      payments: {
+        Row: Payment;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      bookings: {
+        Row: Booking;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      matchmaking_posts: {
+        Row: MatchmakingPost;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      commission_records: {
+        Row: CommissionRecord;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      razorpay_webhook_events: {
+        Row: RazorpayWebhookEvent;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: {
       venue_catalog: {
         Row: VenueCatalogRow;
+        Relationships: [];
+      };
+      matchmaking_feed: {
+        Row: MatchmakingFeedRow;
         Relationships: [];
       };
     };
@@ -472,6 +654,95 @@ export type Database = {
         Args: Record<string, never>;
         Returns: number;
       };
+      refresh_demo_catalog_slots: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
+      create_matchmaking_post: {
+        Args: {
+          p_booking_id: string;
+          p_team_name: string;
+          p_skill_level?: string | null;
+          p_note?: string | null;
+        };
+        Returns: MatchmakingPost;
+      };
+      join_matchmaking_post: {
+        Args: {
+          p_post_id: string;
+          p_team_name: string;
+          p_note?: string | null;
+        };
+        Returns: MatchmakingPost;
+      };
+      cancel_my_matchmaking_post: {
+        Args: { p_post_id: string };
+        Returns: MatchmakingPost;
+      };
+      expire_matchmaking_posts: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
+      claim_my_razorpay_order: {
+        Args: { p_hold_id: string; p_claim_token: string };
+        Returns: {
+          amount_subunits: number;
+          currency: string;
+          expires_at: string;
+          hold_id: string;
+          payment_id: string;
+          razorpay_order_id: string | null;
+          receipt: string;
+          should_create: boolean;
+          sport_name: string;
+          venue_name: string;
+        };
+      };
+      register_razorpay_order: {
+        Args: {
+          p_payment_id: string;
+          p_claim_token: string;
+          p_order_id: string;
+          p_amount_subunits: number;
+          p_currency: string;
+          p_gateway_order_status: string;
+          p_gateway_created_at: string;
+        };
+        Returns: Payment;
+      };
+      release_razorpay_order_claim: {
+        Args: {
+          p_payment_id: string;
+          p_claim_token: string;
+          p_failure_code: string;
+          p_failure_description: string;
+        };
+        Returns: undefined;
+      };
+      mark_razorpay_payment_processing: {
+        Args: {
+          p_order_id: string;
+          p_payment_id: string;
+          p_amount_subunits: number;
+          p_currency: string;
+          p_gateway_payment_status: string;
+        };
+        Returns: Payment;
+      };
+      process_razorpay_webhook: {
+        Args: {
+          p_event_id: string;
+          p_event_type: string;
+          p_payload_sha256: string;
+          p_payload: Record<string, unknown>;
+          p_order_id: string;
+          p_payment_id: string;
+          p_amount_subunits: number;
+          p_currency: string;
+          p_gateway_payment_status: string;
+        };
+        Returns: Record<string, unknown>;
+      };
     };
     Enums: {
       account_type: AccountType;
@@ -480,6 +751,11 @@ export type Database = {
       venue_approval_decision: VenueApprovalDecision;
       slot_status: SlotStatus;
       booking_hold_status: BookingHoldStatus;
+      payment_status: PaymentStatus;
+      booking_status: BookingStatus;
+      matchmaking_status: MatchmakingStatus;
+      commission_collection_status: CommissionCollectionStatus;
+      webhook_processing_status: WebhookProcessingStatus;
     };
     CompositeTypes: Record<string, never>;
   };

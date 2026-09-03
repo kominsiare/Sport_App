@@ -55,7 +55,7 @@ function holdErrorMessage(message: string) {
     return "That slot was just taken or changed. Refresh the page and choose another time.";
   }
   if (message.includes("booking_enabled_player_required")) {
-    return "Complete Player verification before starting a booking hold.";
+    return "Verify your email or phone before starting a booking hold.";
   }
   return message;
 }
@@ -98,14 +98,14 @@ export function BookingSlotPicker({
 
   if (hasActiveHold) {
     return (
-      <div className="mt-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4">
+      <div className="mt-4 rounded-3xl border border-amber-300 bg-amber-50 p-4">
         <div className="flex items-start gap-3">
-          <HiLockClosed className="mt-0.5 size-5 shrink-0 text-amber-300" />
+          <HiLockClosed className="mt-0.5 size-5 shrink-0 text-amber-700" />
           <div>
-            <p className="text-sm font-semibold text-amber-200">
+            <p className="text-sm font-semibold text-amber-900">
               One payment hold is already active
             </p>
-            <p className="mt-1 text-xs leading-5 text-amber-100/70">
+            <p className="mt-1 text-xs leading-5 text-amber-800/80">
               Complete, cancel, or let that hold expire before selecting another
               physical court window.
             </p>
@@ -170,7 +170,7 @@ export function BookingSlotPicker({
       >
         {selectedSlot ? (
           <div className="grid gap-4">
-            <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+            <div className="arena-field rounded-3xl border border-border bg-secondary/70 p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="accent">{selectedSlot.sportName}</Badge>
                 <Badge variant="neutral">{selectedSlot.duration_minutes} min</Badge>
@@ -179,30 +179,30 @@ export function BookingSlotPicker({
               <p className="mt-1 text-sm text-muted-foreground">{courtName}</p>
               <div className="mt-4 grid gap-3 text-sm">
                 <p className="flex items-center gap-2">
-                  <HiCalendarDays className="size-4 text-accent" />
+                  <HiCalendarDays className="size-4 text-primary" />
                   {dateTime.format(new Date(selectedSlot.start_time))}
                 </p>
                 <p className="flex items-center gap-2">
-                  <HiClock className="size-4 text-accent" />
+                  <HiClock className="size-4 text-primary" />
                   {selectedSlot.duration_minutes} minutes
                 </p>
                 <p className="flex items-center gap-2 font-semibold">
-                  <HiCurrencyRupee className="size-4 text-accent" />
+                  <HiCurrencyRupee className="size-4 text-primary" />
                   {money.format(selectedSlot.price_total)} total
                 </p>
               </div>
             </div>
 
-            <div className="rounded-xl border border-primary/30 bg-primary/10 p-4">
+            <div className="rounded-2xl border border-primary/30 bg-primary/10 p-4">
               <p className="text-sm font-semibold">₹500 advance comes next</p>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                Module 5 creates the real hold only. Razorpay checkout and booking
-                confirmation arrive in Module 6.
+                This creates the real ten-minute hold. The Bookings page opens
+                Razorpay, and the slot confirms only after the secure webhook.
               </p>
             </div>
 
             {message ? (
-              <p className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+              <p className="rounded-xl border border-red-500/20 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {message}
               </p>
             ) : null}

@@ -1,0 +1,73 @@
+{
+  "expo": {
+    "name": "Pllayz",
+    "slug": "pllayz",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/images/icon.png",
+    "scheme": "io.pllayz.app",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "io.pllayz.app",
+      "supportsTablet": true,
+      "associatedDomains": [
+        "applinks:pllayz-app.onrender.com",
+        "applinks:pllayz-app.vercel.app"
+      ]
+    },
+    "android": {
+      "package": "io.pllayz.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E8F7F0",
+        "foregroundImage": "./assets/images/icon.png",
+        "monochromeImage": "./assets/images/icon.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": false,
+          "data": [{ "scheme": "io.pllayz.app", "host": "login-callback" }],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "pllayz-app.onrender.com",
+              "pathPrefix": "/mobile-auth"
+            },
+            {
+              "scheme": "https",
+              "host": "pllayz-app.vercel.app",
+              "pathPrefix": "/mobile-auth"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F5F7F6",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 104
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "reactCompiler": true
+    }
+  }
+}

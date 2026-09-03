@@ -131,7 +131,7 @@ function VenueForm({
               field("city", event.target.value as TricityCity)
             }
             disabled={busy}
-            className="focus-ring h-12 rounded-xl border border-input bg-[#071020] px-4 text-sm text-foreground"
+            className="focus-ring h-12 rounded-xl border border-input bg-card px-4 text-sm text-foreground"
           >
             {cities.map((city) => (
               <option key={city}>{city}</option>
@@ -202,7 +202,7 @@ function VenueForm({
           disabled={busy}
           required
           rows={4}
-          className="focus-ring w-full rounded-xl border border-input bg-[#071020] px-4 py-3 text-sm leading-6 text-foreground placeholder:text-muted-foreground"
+          className="focus-ring w-full rounded-xl border border-input bg-card px-4 py-3 text-sm leading-6 text-foreground placeholder:text-muted-foreground"
         />
       </label>
 
@@ -243,7 +243,7 @@ function VenueForm({
       </label>
 
       {message ? (
-        <p className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+        <p className="rounded-xl border border-red-500/20 bg-red-50 px-4 py-3 text-sm text-red-700">
           {message}
         </p>
       ) : null}
@@ -459,7 +459,7 @@ export function OwnerVenueManager({
           </p>
         </Card>
         <Card className="p-5">
-          <p className="text-2xl font-bold text-accent">{totals.live}</p>
+          <p className="text-2xl font-bold text-primary">{totals.live}</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Approved and visible
           </p>
@@ -480,7 +480,7 @@ export function OwnerVenueManager({
       </div>
 
       {message && !createOpen && !editing ? (
-        <p className="mt-4 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+        <p className="mt-4 rounded-xl border border-red-500/20 bg-red-50 px-4 py-3 text-sm text-red-700">
           {message}
         </p>
       ) : null}
@@ -491,7 +491,7 @@ export function OwnerVenueManager({
             <Card key={venue.id} className="p-5">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 items-start gap-4">
-                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary/15 text-accent">
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary">
                     <HiBuildingOffice2 className="size-6" />
                   </span>
                   <div className="min-w-0">
@@ -503,7 +503,7 @@ export function OwnerVenueManager({
                       />
                     </div>
                     <p className="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                      <HiMapPin className="size-4 text-accent" />
+                      <HiMapPin className="size-4 text-primary" />
                       {venue.area}, {venue.city}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -524,7 +524,7 @@ export function OwnerVenueManager({
                     </div>
                     {venue.approval?.decision === "rejected" &&
                     venue.approval.review_note ? (
-                      <p className="mt-3 text-xs leading-5 text-red-200">
+                      <p className="mt-3 text-xs leading-5 text-red-700">
                         Review note: {venue.approval.review_note}
                       </p>
                     ) : null}
@@ -568,7 +568,7 @@ export function OwnerVenueManager({
         </div>
       ) : (
         <Card className="mt-4 flex min-h-64 flex-col items-center justify-center px-6 py-10 text-center">
-          <HiBuildingOffice2 className="size-9 text-accent" />
+          <HiBuildingOffice2 className="size-9 text-primary" />
           <h3 className="mt-4 font-semibold">Create your first venue</h3>
           <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
             Start with the venue profile and primary image. Courts and weekly

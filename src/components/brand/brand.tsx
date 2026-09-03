@@ -26,7 +26,7 @@ export function Brand({ href = "/", compact = false, className }: BrandProps) {
       />
       <span
         className={cn(
-          "font-display font-bold italic tracking-[-0.04em] text-white",
+          "font-display font-bold tracking-[-0.04em] text-foreground",
           compact ? "text-xl" : "text-3xl",
         )}
       >

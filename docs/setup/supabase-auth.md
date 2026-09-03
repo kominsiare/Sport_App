@@ -10,8 +10,15 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 - Module 3 venue browsing migrations: applied.
 - Module 4 owner dashboard migrations: applied.
 - Module 5 booking hold migrations: applied.
-- Site URL: `http://localhost:3000`.
-- Redirect URL: `http://localhost:3000/auth/callback`.
+- Module 6 Razorpay payment and service-role hardening migrations: applied.
+- Module 7 team matchmaking migration: applied and verified on 2026-07-08.
+- Email-or-phone booking eligibility and rolling demo-slot migrations: applied and
+  verified on 2026-07-24.
+- Production web origin: `https://pllayz-app.onrender.com` (HTTP 200 verified on
+  2026-09-03).
+- Required hosted redirects: `https://pllayz-app.onrender.com/auth/confirm`,
+  `https://pllayz-app.onrender.com/auth/callback`, and
+  `https://pllayz-app.onrender.com/mobile-auth`.
 - Web publishable key: stored only in ignored `.env.local`.
 - Email provider: enabled.
 - Phone provider: waiting for Twilio Verify credentials.
@@ -54,24 +61,162 @@ read policies are consolidated to avoid duplicate RLS evaluation.
 
 Module 5 adds immutable ten-minute booking snapshots, physical-court overlap exclusion,
 one-active-hold enforcement, cancellation and expiry RPCs, Player/Owner read isolation,
-and append-only booking audit events. Razorpay is intentionally not connected yet.
+and append-only booking audit events.
+
+Module 6 adds Razorpay order/payment state, webhook-confirmed booking snapshots,
+commission records, idempotent webhook events, and three deployed Edge Functions.
+Razorpay Test Mode credentials and the signed Dashboard webhook are connected.
+
+Module 7 adds team opponent matchmaking on top of confirmed bookings. A Player can
+publish a future confirmed booking as an open opponent search, and one other verified
+Player team can join that same slot without creating another booking hold, Razorpay
+order, payment, refund, or settlement. The migration file is:
+
+```text
+supabase/migrations/20260708100000_module_7_team_matchmaking.sql
+```
+
+As of 2026-07-08, this migration is live in the hosted Supabase project. Remote
+verification confirmed `matchmaking_posts`, `matchmaking_feed`,
+`create_matchmaking_post`, `join_matchmaking_post`, `cancel_my_matchmaking_post`, and
+`expire_matchmaking_posts`. Supabase DB lint reported no schema errors after the push.
+The app keeps a defensive fallback so pages do not crash if a future environment is
+missing the Module 7 objects.
+
+The 2026-07-24 recovery migrations make verified email-link accounts first-class
+booking and matchmaking participants and add an authenticated rolling refresh for the
+fictional venue catalog:
+
+```text
+supabase/migrations/20260724165610_enable_email_matchmaking_and_refresh_demo_slots.sql
+supabase/migrations/20260724165706_refresh_system_owned_demo_catalog_slots.sql
+```
+
+The refresh is idempotent and limited to the reserved fictional seed venue UUID range.
+It does not alter real owner-created venues, payment records, or confirmed bookings.
+Live verification produced 854 available slots across the next 14 dates, enabled both
+complete Players, denied anonymous RPC execution, and preserved the existing captured
+Razorpay payment and confirmed booking.
+
+## Razorpay Test Mode connection
+
+Create Test Mode API keys in Razorpay, then store them as Supabase Edge Function
+secrets:
+
+```bash
+supabase secrets set \
+  RAZORPAY_KEY_ID=rzp_test_your_key_id \
+  RAZORPAY_KEY_SECRET=your_test_key_secret \
+  RAZORPAY_WEBHOOK_SECRET=your_random_webhook_secret \
+  --project-ref mljvwgboykoynsdqhhvl
+```
+
+In Razorpay **Webhooks**, register:
+
+```text
+https://mljvwgboykoynsdqhhvl.supabase.co/functions/v1/razorpay-webhook
+```
+
+Use the same `RAZORPAY_WEBHOOK_SECRET` and subscribe to:
+
+- `payment.captured`
+- `payment.failed`
+- `order.paid`
+
+Keep Razorpay in Test Mode until the full checkout and webhook QA passes. Never add
+Razorpay secrets to `.env.local`, source files, Git, or browser-exposed environment
+variables.
+
+Current Test Mode status:
+
+- API key authentication verified.
+- Edge Function secrets configured.
+- Webhook active at the URL above.
+- `payment.captured`, `payment.failed`, and `order.paid` enabled.
+- Signed webhook readiness check passed.
+- Server-created ₹500 INR order smoke test passed.
+- All 20 active seed venues have a dedicated verified system owner, so booking and
+  commission owner references are valid.
+- Captured, duplicate, mismatched-amount, and failed webhook scenarios passed with
+  temporary fixtures and cleanup.
+- One interactive Test Checkout captured ₹500 INR and produced the expected confirmed
+  booking and 5% commission record.
+- Temporary Player phone verification was reverted after Checkout. A complete Player
+  with a verified email remains booking-enabled without phone verification.
+- Player and Owner payment screens passed desktop and exact 390px mobile visual QA
+  without overflow, clipping, incorrect payment states, or final route runtime errors.
+- Module 6 is ready for review.
+
+The seed-owner credentials are stored only in macOS Keychain. Module 7 Admin operations
+must provide a controlled venue-claim/reassignment workflow before real venue onboarding.
+
+An Owner created through email can complete onboarding after the required name,
+business name, and city fields are saved and either email or phone is verified. Phone
+verification remains available for deployments that configure Twilio Verify, but it
+is no longer required in addition to a verified email.
 
 ## 3. Configure redirect URLs
 
-In **Authentication → URL Configuration**:
+The required production values in **Authentication → URL Configuration** are:
 
-- Site URL: `http://localhost:3000` for local development.
-- Additional redirect URL: `http://localhost:3000/auth/callback`
-- Add the production origin and `/auth/callback` after deployment.
+- Production Site URL: `https://pllayz-app.onrender.com`
+- Hosted redirect allow-list: `https://pllayz-app.onrender.com/**`
+- Native redirect allow-list: `io.pllayz.app://**`
 
-The localhost values are already configured. Production values remain pending until the
-application has a stable deployment URL.
+The Flutter and React Native clients use
+`https://pllayz-app.onrender.com/mobile-auth` for email returns. This keeps the
+initial Supabase redirect on the hosted production origin. Android verifies that URL
+through `public/.well-known/assetlinks.json` and opens package `io.pllayz.app`
+directly. When a browser handles the URL, `/mobile-auth` forwards its complete query
+string and fragment to `io.pllayz.app://login-callback/`, which both mobile clients
+register.
 
-## 4. Configure email OTP
+Mobile magic links must be requested and opened on the same device because the mobile
+clients use PKCE. Each link is single-use; opening an older or already consumed email
+correctly returns an invalid/expired-link response.
+
+Before sharing a new mobile build, verify all three production entries above in the
+Supabase dashboard. Local development redirects should be added only while actively
+testing locally, then removed before a public beta. Supabase falls back to its Site URL
+when a requested callback is not allow-listed.
+
+The Render service must set:
+
+```text
+NEXT_PUBLIC_APP_URL=https://pllayz-app.onrender.com
+```
+
+The React Native build additionally sets:
+
+```text
+EXPO_PUBLIC_WEB_URL=https://pllayz-app.onrender.com
+EXPO_PUBLIC_AUTH_REDIRECT_URL=https://pllayz-app.onrender.com/mobile-auth
+```
+
+Never ship `localhost` in any production web or mobile environment variable.
+
+## 4. Configure email sign-in
 
 Enable Email authentication.
 
-Use `{{ .Token }}` in the email template when you want a six-digit OTP rather than a magic link.
+The connected Free project currently uses Supabase's default secure Magic Link email.
+The app labels this accurately as **Email link**.
+
+The hosted Free project cannot customize Auth email templates while using Supabase's
+default email provider. To keep the PWA usable without upgrading or adding SMTP, email
+sign-in requests use Supabase's implicit magic-link flow and redirect to
+`/auth/confirm?account_type=...&next=...`. The `/auth/confirm` client page reads the
+one-time session from the URL fragment, calls `/auth/session` to store the session in
+SSR cookies, and then routes the user to onboarding or the correct workspace.
+
+Supabase projects created after June 3, 2026 cannot customize Auth email templates
+while using the default email provider on the Free plan. To switch to a six-digit email
+OTP later:
+
+1. Configure custom SMTP or upgrade to a plan that permits template customization.
+2. Change the Magic Link template to use `{{ .Token }}` instead of
+   `{{ .ConfirmationURL }}`.
+3. Restore the six-digit email-code entry state in the login UI.
 
 Supabase’s default email service is suitable only for development. Configure custom SMTP before public beta.
 

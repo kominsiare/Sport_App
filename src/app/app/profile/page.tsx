@@ -62,7 +62,7 @@ export default async function ProfilePage() {
             const Icon = row.icon;
             return (
               <div key={row.label} className="flex items-center gap-4 p-4">
-                <span className="grid size-10 place-items-center rounded-xl bg-secondary text-accent">
+                <span className="grid size-10 place-items-center rounded-xl bg-secondary text-primary">
                   <Icon className="size-5" />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -88,8 +88,8 @@ export default async function ProfilePage() {
             {profile.account_type === "owner"
               ? "This account can manage its own venues. It cannot make player bookings."
               : profile.can_book
-                ? "This account can browse venues and meets the verified-phone requirement for future bookings."
-                : "This account can browse venues. Verify a mobile number before a future booking can be created."}
+                ? "This account can browse venues and book with a verified email or mobile number."
+                : "This account can browse venues. Verify your email or mobile number before creating a booking."}
           </p>
         </Card>
       </div>

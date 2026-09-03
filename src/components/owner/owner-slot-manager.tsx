@@ -216,8 +216,8 @@ function CourtForm({
                 className={cn(
                   "flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-3 text-sm transition",
                   selected
-                    ? "border-accent/40 bg-accent/10 text-accent"
-                    : "border-border bg-[#071020] text-muted-foreground",
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border bg-card text-muted-foreground",
                 )}
               >
                 <input
@@ -225,7 +225,7 @@ function CourtForm({
                   checked={selected}
                   onChange={() => toggleSport(sport.id)}
                   disabled={busy}
-                  className="accent-[#b8ff4f]"
+                  className="accent-[#00a86b]"
                 />
                 {sport.name}
               </label>
@@ -235,7 +235,7 @@ function CourtForm({
       </fieldset>
 
       {message ? (
-        <p className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+        <p className="rounded-xl border border-red-500/20 bg-red-50 px-4 py-3 text-sm text-red-700">
           {message}
         </p>
       ) : null}
@@ -287,7 +287,7 @@ function RuleForm({
           }}
           disabled={busy}
           required
-          className="focus-ring h-12 rounded-xl border border-input bg-[#071020] px-4 text-sm text-foreground"
+          className="focus-ring h-12 rounded-xl border border-input bg-card px-4 text-sm text-foreground"
         >
           {court.sports
             .filter((row) => row.is_active)
@@ -307,7 +307,7 @@ function RuleForm({
             onChange({ ...value, weekday: event.target.value })
           }
           disabled={busy}
-          className="focus-ring h-12 rounded-xl border border-input bg-[#071020] px-4 text-sm text-foreground"
+          className="focus-ring h-12 rounded-xl border border-input bg-card px-4 text-sm text-foreground"
         >
           {weekdays.map((day, index) => (
             <option key={day} value={index}>
@@ -377,14 +377,14 @@ function RuleForm({
 
       <p className="rounded-xl border border-border bg-secondary/50 px-4 py-3 text-xs leading-5 text-muted-foreground">
         Estimated Pllayz commission:{" "}
-        <span className="font-semibold text-accent">
+        <span className="font-semibold text-primary">
           {money.format(Number(value.priceTotal || 0) * 0.05)}
         </span>{" "}
         per completed booking. This is read-only until payments are built.
       </p>
 
       {message ? (
-        <p className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+        <p className="rounded-xl border border-red-500/20 bg-red-50 px-4 py-3 text-sm text-red-700">
           {message}
         </p>
       ) : null}
@@ -792,7 +792,7 @@ export function OwnerSlotManager({
       </div>
 
       {message ? (
-        <p className="mt-4 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+        <p className="mt-4 rounded-xl border border-red-500/20 bg-red-50 px-4 py-3 text-sm text-red-700">
           {message}
         </p>
       ) : null}
@@ -883,7 +883,7 @@ export function OwnerSlotManager({
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-bold text-accent">
+                    <p className="text-lg font-bold text-primary">
                       {money.format(court.base_price)}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -988,10 +988,10 @@ export function OwnerSlotManager({
                             className={cn(
                               "rounded-xl border p-3",
                               slot.status === "blocked"
-                                ? "border-amber-400/30 bg-amber-400/10"
+                                ? "border-amber-300 bg-amber-50"
                                 : slot.status === "held" || slot.status === "booked"
-                                  ? "border-red-400/30 bg-red-400/10"
-                                  : "border-border bg-[#071020]",
+                                  ? "border-red-500/20 bg-red-50"
+                                  : "border-border bg-card",
                             )}
                           >
                             <div className="flex items-start justify-between gap-2">
@@ -1016,7 +1016,7 @@ export function OwnerSlotManager({
                               </Badge>
                             </div>
                             <div className="mt-3 flex items-center justify-between gap-2">
-                              <p className="text-xs font-semibold text-accent">
+                              <p className="text-xs font-semibold text-primary">
                                 {money.format(slot.price_total)}
                               </p>
                               {slot.status === "available" ? (
@@ -1041,11 +1041,11 @@ export function OwnerSlotManager({
                                   Unblock
                                 </Button>
                               ) : (
-                                <span className="text-xs text-red-200">Locked</span>
+                                <span className="text-xs text-red-700">Locked</span>
                               )}
                             </div>
                             {slot.owner_block_reason ? (
-                              <p className="mt-2 text-xs leading-5 text-amber-200">
+                              <p className="mt-2 text-xs leading-5 text-amber-700">
                                 {slot.owner_block_reason}
                               </p>
                             ) : null}
@@ -1065,7 +1065,7 @@ export function OwnerSlotManager({
         </div>
       ) : (
         <Card className="mt-4 flex min-h-56 flex-col items-center justify-center p-8 text-center">
-          <HiCalendarDays className="size-8 text-accent" />
+          <HiCalendarDays className="size-8 text-primary" />
           <h3 className="mt-4 font-semibold">Add the first playable surface</h3>
           <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
             Courts, turfs and grounds hold sports, pricing, availability rules and slots.
@@ -1162,7 +1162,7 @@ export function OwnerSlotManager({
           {blockingSlot ? (
             <div className="rounded-xl border border-border bg-secondary/50 p-4">
               <p className="flex items-center gap-2 text-sm font-semibold">
-                <HiClock className="size-4 text-accent" />
+                <HiClock className="size-4 text-primary" />
                 {slotDate.format(new Date(blockingSlot.start_time))}
               </p>
               <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
@@ -1182,7 +1182,7 @@ export function OwnerSlotManager({
               required
               disabled={busy}
               placeholder="Maintenance, private event, offline booking…"
-              className="focus-ring rounded-xl border border-input bg-[#071020] px-4 py-3 text-sm text-foreground"
+              className="focus-ring rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground"
             />
           </label>
           <Button type="submit" disabled={busy}>

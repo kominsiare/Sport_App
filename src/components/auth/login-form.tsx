@@ -19,13 +19,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { OtpInput } from "@/components/ui/otp-input";
-import { getBrowserSupabaseClient } from "@/lib/supabase/client";
+import {
+  getBrowserSupabaseClient,
+  getImplicitBrowserSupabaseClient,
+} from "@/lib/supabase/client";
 import type { AuthProviderAvailability } from "@/lib/supabase/auth-settings";
 import { cn } from "@/lib/utils";
 import type { AccountType } from "@/types/database";
 
 type Method = "phone" | "email";
-type Stage = "identify" | "verify";
+type Stage = "identify" | "verify" | "link-sent";
 
 const errorMessages: Record<string, string> = {
   account_type_conflict:
@@ -35,9 +38,10 @@ const errorMessages: Record<string, string> = {
   connection_required:
     "Supabase is not connected yet. Add the project URL and publishable key to .env.local.",
   callback_failed:
-    "That sign-in link is invalid, expired, or was opened outside the browser that requested it. Request a fresh email and try again.",
+    "That sign-in link is invalid or expired. Request a fresh email and try again.",
   oauth_failed: "Google sign-in could not be completed. Please try again.",
-  session_missing: "Your sign-in session expired. Please request a fresh code.",
+  session_missing:
+    "Your sign-in session expired. Please request a fresh sign-in email.",
   profile_failed: "We could not prepare your Pllayz profile. Please try again.",
 };
 
@@ -62,6 +66,17 @@ function readableAuthError(message: string) {
     return "The code is invalid or expired. Request a new one and try again.";
   }
   return message;
+}
+
+function buildAuthUrl(path: "/auth/callback" | "/auth/confirm", accountType: AccountType, nextPath: string) {
+  const configuredOrigin = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  const baseOrigin = configuredOrigin || window.location.origin;
+  const callbackUrl = new URL(path, baseOrigin);
+
+  callbackUrl.searchParams.set("account_type", accountType);
+  callbackUrl.searchParams.set("next", nextPath);
+
+  return callbackUrl.toString();
 }
 
 export function LoginForm({
@@ -110,26 +125,20 @@ export function LoginForm({
     setBusy(true);
     setMessage("");
 
-    const supabase = getBrowserSupabaseClient();
     const { error } =
       method === "phone"
-        ? await supabase.auth.signInWithOtp({
+        ? await getBrowserSupabaseClient().auth.signInWithOtp({
             phone: normalized,
             options: {
               shouldCreateUser: true,
               data: { account_type: accountType },
             },
           })
-        : await supabase.auth.signInWithOtp({
+        : await getImplicitBrowserSupabaseClient().auth.signInWithOtp({
             email: normalized,
             options: {
               shouldCreateUser: true,
-              emailRedirectTo: (() => {
-                const callbackUrl = new URL("/auth/callback", window.location.origin);
-                callbackUrl.searchParams.set("account_type", accountType);
-                callbackUrl.searchParams.set("next", nextPath);
-                return callbackUrl.toString();
-              })(),
+              emailRedirectTo: buildAuthUrl("/auth/confirm", accountType, nextPath),
               data: { account_type: accountType },
             },
           });
@@ -142,28 +151,21 @@ export function LoginForm({
     }
 
     setSentTo(normalized);
-    setStage("verify");
+    setStage(method === "phone" ? "verify" : "link-sent");
   }
 
   async function verifyCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (otp.length !== 6 || !configured) return;
+    if (method !== "phone" || otp.length !== 6 || !configured) return;
 
     setBusy(true);
     setMessage("");
     const supabase = getBrowserSupabaseClient();
-    const { error } =
-      method === "phone"
-        ? await supabase.auth.verifyOtp({
-            phone: sentTo,
-            token: otp,
-            type: "sms",
-          })
-        : await supabase.auth.verifyOtp({
-            email: sentTo,
-            token: otp,
-            type: "email",
-          });
+    const { error } = await supabase.auth.verifyOtp({
+      phone: sentTo,
+      token: otp,
+      type: "sms",
+    });
 
     if (error) {
       setBusy(false);
@@ -184,14 +186,12 @@ export function LoginForm({
     setBusy(true);
     setMessage("");
     const supabase = getBrowserSupabaseClient();
-    const callbackUrl = new URL("/auth/callback", window.location.origin);
-    callbackUrl.searchParams.set("account_type", accountType);
-    callbackUrl.searchParams.set("next", nextPath);
+    const callbackUrl = buildAuthUrl("/auth/callback", accountType, nextPath);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: callbackUrl.toString(),
+        redirectTo: callbackUrl,
       },
     });
 
@@ -202,7 +202,7 @@ export function LoginForm({
   }
 
   return (
-    <main className="night-grid min-h-dvh px-4 py-6 md:grid md:place-items-center md:py-12">
+    <main className="arena-surface min-h-dvh px-4 py-6 md:grid md:place-items-center md:py-12">
       <div className="mx-auto w-full max-w-md">
         <div className="flex items-center justify-between">
           <Brand compact />
@@ -215,14 +215,16 @@ export function LoginForm({
           </Link>
         </div>
 
-        <Card className="blue-glow mt-10 border-primary/35 bg-[#071020]/95 p-5 md:p-7">
-          <span className="grid size-12 place-items-center rounded-full bg-primary/15 text-accent">
+        <Card className="motion-rise mt-10 p-5 md:p-7">
+          <span className="grid size-12 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
             <HiLockClosed className="size-6" />
           </span>
-          <h1 className="mt-5 text-2xl font-bold tracking-tight">Enter the Pllayz arena</h1>
+          <h1 className="mt-5 text-3xl font-bold leading-tight tracking-[-0.04em]">
+            Sign in to Pllayz
+          </h1>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Select the account you want to use. This choice is permanent so player and
-            venue permissions never get mixed.
+            Choose your role, then continue with phone, email, or Google. Player
+            and Venue Owner permissions stay separate.
           </p>
 
           <div className="mt-6 grid grid-cols-2 gap-2">
@@ -237,7 +239,7 @@ export function LoginForm({
                 <button
                   key={item.value}
                   type="button"
-                  disabled={stage === "verify" || busy}
+                  disabled={stage !== "identify" || busy}
                   onClick={() => {
                     setAccountType(item.value);
                     setMessage("");
@@ -245,8 +247,8 @@ export function LoginForm({
                   className={cn(
                     "focus-ring flex min-h-14 items-center justify-center gap-2 rounded-xl border px-3 text-sm font-semibold transition",
                     accountType === item.value
-                      ? "border-accent/50 bg-accent/10 text-accent"
-                      : "border-border bg-background text-muted-foreground hover:text-foreground",
+                      ? "border-primary/50 bg-primary/10 text-primary"
+                      : "border-border bg-card text-muted-foreground hover:text-foreground",
                   )}
                 >
                   <Icon className="size-5" />
@@ -256,16 +258,16 @@ export function LoginForm({
             })}
           </div>
 
-          <div className="mt-5 grid grid-cols-2 rounded-xl border border-border bg-background p-1">
+          <div className="mt-5 grid grid-cols-2 rounded-2xl border border-border bg-muted p-1">
             {(["phone", "email"] as Method[]).map((item) => (
               <button
                 key={item}
                 type="button"
-                disabled={stage === "verify" || busy || !providers[item]}
+                disabled={stage !== "identify" || busy || !providers[item]}
                 onClick={() => resetVerification(item)}
                 className={cn(
                   "focus-ring flex min-h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold capitalize text-muted-foreground transition disabled:cursor-not-allowed disabled:opacity-45",
-                  method === item && "bg-secondary text-foreground",
+                  method === item && "bg-card text-foreground shadow-sm",
                 )}
               >
                 {item === "phone" ? (
@@ -273,7 +275,7 @@ export function LoginForm({
                 ) : (
                   <HiEnvelope className="size-4" />
                 )}
-                {item} OTP
+                {item === "phone" ? "Phone OTP" : "Email link"}
               </button>
             ))}
           </div>
@@ -281,7 +283,7 @@ export function LoginForm({
           {message ? (
             <div
               role="alert"
-              className="mt-4 flex gap-3 rounded-xl border border-amber-300/25 bg-amber-300/10 p-3 text-xs leading-5 text-amber-100"
+              className="mt-4 flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs leading-5 text-amber-800"
             >
               <HiExclamationTriangle className="mt-0.5 size-4 shrink-0" />
               <span>{message}</span>
@@ -311,18 +313,21 @@ export function LoginForm({
                 size="lg"
                 disabled={!configured || busy}
               >
-                {busy ? "Sending code…" : "Send one-time code"}
+                {busy
+                  ? method === "phone"
+                    ? "Sending code…"
+                    : "Sending link…"
+                  : method === "phone"
+                    ? "Send one-time code"
+                    : "Send secure sign-in link"}
                 {!busy ? <HiArrowRight className="size-5" /> : null}
               </Button>
             </form>
-          ) : (
+          ) : stage === "verify" ? (
             <form className="mt-5" onSubmit={verifyCode}>
               <p className="text-sm font-medium">Enter the six-digit code</p>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
                 Sent to {sentTo}.
-                {method === "email"
-                  ? " You can enter the code or open the secure sign-in link in the email."
-                  : null}
               </p>
               <OtpInput
                 key={`${method}-${sentTo}`}
@@ -349,6 +354,26 @@ export function LoginForm({
                 Change {method === "phone" ? "number" : "email"}
               </Button>
             </form>
+          ) : (
+            <div className="mt-5">
+              <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">
+                <HiEnvelope className="size-5" />
+              </span>
+              <h2 className="mt-4 font-semibold">Check your email</h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                We sent a secure, one-use sign-in link to {sentTo}. Open it in
+                this browser to continue.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-3 px-0 text-muted-foreground"
+                disabled={busy}
+                onClick={() => resetVerification("email")}
+              >
+                Change email or resend
+              </Button>
+            </div>
           )}
 
           <div className="my-6 flex items-center gap-3">
@@ -362,7 +387,7 @@ export function LoginForm({
           <Button
             variant="outline"
             className="w-full"
-            disabled={!configured || !providers.google || busy || stage === "verify"}
+            disabled={!configured || !providers.google || busy || stage !== "identify"}
             onClick={continueWithGoogle}
           >
             <FcGoogle className="size-5" />
