@@ -10,6 +10,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "mobile/**",
+    "mobile-react-native/**",
     "next-env.d.ts",
   ]),
 ]);
