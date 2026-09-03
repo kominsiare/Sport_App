@@ -14,9 +14,11 @@ The `pllayz` Supabase project in AWS Mumbai (`ap-south-1`) is connected locally.
 - Module 7 team matchmaking migration: applied and verified on 2026-07-08.
 - Email-or-phone booking eligibility and rolling demo-slot migrations: applied and
   verified on 2026-07-24.
-- Site URL: `https://pllayz-app.vercel.app`.
-- Redirect URLs: `https://pllayz-app.vercel.app/auth/confirm` for email links and
-  `https://pllayz-app.vercel.app/auth/callback` for OAuth.
+- Production web origin: `https://pllayz-app.onrender.com` (HTTP 200 verified on
+  2026-09-03).
+- Required hosted redirects: `https://pllayz-app.onrender.com/auth/confirm`,
+  `https://pllayz-app.onrender.com/auth/callback`, and
+  `https://pllayz-app.onrender.com/mobile-auth`.
 - Web publishable key: stored only in ignored `.env.local`.
 - Email provider: enabled.
 - Phone provider: waiting for Twilio Verify credentials.
@@ -155,38 +157,43 @@ is no longer required in addition to a verified email.
 
 ## 3. Configure redirect URLs
 
-In **Authentication → URL Configuration**:
+The required production values in **Authentication → URL Configuration** are:
 
-- Production Site URL: `https://pllayz-app.vercel.app`
-- Hosted redirect allow-list: `https://pllayz-app.vercel.app/**`
+- Production Site URL: `https://pllayz-app.onrender.com`
+- Hosted redirect allow-list: `https://pllayz-app.onrender.com/**`
+- Native redirect allow-list: `io.pllayz.app://**`
 
-The Flutter app uses
-`https://pllayz-app.vercel.app/mobile-auth` for email and Google returns. This
-keeps the initial Supabase redirect inside the existing hosted allow-list.
-Android verifies that URL through
-`public/.well-known/assetlinks.json` and opens package `io.pllayz.app`
-directly. When a browser handles the URL, `/mobile-auth` forwards its complete
-query string and fragment to `io.pllayz.app://login-callback/`, which is
-registered in both Android and iOS.
+The Flutter and React Native clients use
+`https://pllayz-app.onrender.com/mobile-auth` for email returns. This keeps the
+initial Supabase redirect on the hosted production origin. Android verifies that URL
+through `public/.well-known/assetlinks.json` and opens package `io.pllayz.app`
+directly. When a browser handles the URL, `/mobile-auth` forwards its complete query
+string and fragment to `io.pllayz.app://login-callback/`, which both mobile clients
+register.
 
-Mobile magic links must be requested and opened on the same device because the
-Flutter client uses PKCE. Each link is single-use; opening an older or already
-consumed email correctly returns an invalid/expired-link response.
+Mobile magic links must be requested and opened on the same device because the mobile
+clients use PKCE. Each link is single-use; opening an older or already consumed email
+correctly returns an invalid/expired-link response.
 
-The hosted Supabase project is intentionally Vercel-only for tester sign-in. Local
-development redirects should be added only when actively testing the local app, then
-removed again before sharing the hosted PWA. Supabase falls back to the configured Site
-URL when the requested callback is not allow-listed.
+Before sharing a new mobile build, verify all three production entries above in the
+Supabase dashboard. Local development redirects should be added only while actively
+testing locally, then removed before a public beta. Supabase falls back to its Site URL
+when a requested callback is not allow-listed.
 
-Vercel Production and Preview must also set:
+The Render service must set:
 
 ```text
-NEXT_PUBLIC_APP_URL=https://pllayz-app.vercel.app
+NEXT_PUBLIC_APP_URL=https://pllayz-app.onrender.com
 ```
 
-This public app origin was verified on 2026-07-20 after a stale
-`http://localhost:3000` value caused hosted email sign-in links to open the wrong
-domain.
+The React Native build additionally sets:
+
+```text
+EXPO_PUBLIC_WEB_URL=https://pllayz-app.onrender.com
+EXPO_PUBLIC_AUTH_REDIRECT_URL=https://pllayz-app.onrender.com/mobile-auth
+```
+
+Never ship `localhost` in any production web or mobile environment variable.
 
 ## 4. Configure email sign-in
 
